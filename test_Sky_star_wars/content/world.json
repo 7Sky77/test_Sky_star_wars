@@ -1,0 +1,8 @@
+{
+  "minArm": 1,
+  "maxArm": 50,
+  "minSystem": 1,
+  "maxSystem": 50,
+  "starSlot": 0,
+  "maxPlanetSlot": 9
+}
