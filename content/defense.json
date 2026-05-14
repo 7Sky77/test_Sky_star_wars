@@ -1,0 +1,32 @@
+[
+  {
+    "id": "rocket_launcher",
+    "name": "Ракетница",
+    "description": "Планетарная оборона.",
+    "costs": [
+      { "resourceId": "metal", "base": 2000, "growth": 1 },
+      { "resourceId": "crystal", "base": 0, "growth": 1 }
+    ],
+    "buildTimeSeconds": 0
+  },
+  {
+    "id": "light_laser",
+    "name": "Лёгкий лазер",
+    "description": "Планетарная оборона.",
+    "costs": [
+      { "resourceId": "metal", "base": 1500, "growth": 1 },
+      { "resourceId": "crystal", "base": 500, "growth": 1 }
+    ],
+    "buildTimeSeconds": 0
+  },
+  {
+    "id": "heavy_laser",
+    "name": "Тяжёлый лазер",
+    "description": "Планетарная оборона.",
+    "costs": [
+      { "resourceId": "metal", "base": 6000, "growth": 1 },
+      { "resourceId": "crystal", "base": 2000, "growth": 1 }
+    ],
+    "buildTimeSeconds": 0
+  }
+]

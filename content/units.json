@@ -1,0 +1,34 @@
+[
+  {
+    "id": "solar_satellite",
+    "name": "Солнечный спутник",
+    "description": "На орбите планеты, даёт 50 энергии за штуку.",
+    "costs": [
+      { "resourceId": "metal", "base": 2000, "growth": 1 },
+      { "resourceId": "crystal", "base": 2000, "growth": 1 },
+      { "resourceId": "deuterium", "base": 500, "growth": 1 }
+    ],
+    "buildTimeSeconds": 0,
+    "energyPerUnit": 50
+  },
+  {
+    "id": "small_cargo",
+    "name": "Малый транспорт",
+    "description": "Перевозка ресурсов (MVP: только учёт на планете).",
+    "costs": [
+      { "resourceId": "metal", "base": 2000, "growth": 1 },
+      { "resourceId": "crystal", "base": 2000, "growth": 1 }
+    ],
+    "buildTimeSeconds": 0
+  },
+  {
+    "id": "large_cargo",
+    "name": "Большой транспорт",
+    "description": "Крупный грузовой корабль (MVP: только учёт на планете).",
+    "costs": [
+      { "resourceId": "metal", "base": 6000, "growth": 1 },
+      { "resourceId": "crystal", "base": 6000, "growth": 1 }
+    ],
+    "buildTimeSeconds": 0
+  }
+]
