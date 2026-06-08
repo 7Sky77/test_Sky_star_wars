@@ -10,6 +10,7 @@ export interface GameState {
   user: {
     username: string;
     factionId: string;
+    isAdmin?: boolean;
   };
   planet: {
     id: number;
@@ -17,9 +18,21 @@ export interface GameState {
     arm: number;
     system: number;
     position: number;
-    resources: { metal: number; crystal: number; deuterium: number };
+    planetTypeId: string;
+    diameterKm: number;
+    temperatureMin: number;
+    temperatureMax: number;
+    resources: { metal: number; minerals: number; vespene: number };
   };
   buildings: { building_id: string; level: number }[];
+  research: { research_id: string; level: number }[];
+  researchQueue: {
+    id: number;
+    research_id: string;
+    target_level: number;
+    started_at: number;
+    finishes_at: number;
+  } | null;
   buildQueue: {
     id: number;
     building_id: string;
@@ -31,15 +44,28 @@ export interface GameState {
   defense: { defense_id: string; quantity: number }[];
 }
 
+export interface GalaxySlot {
+  position: number;
+  kind: "star" | "planet";
+  label: string;
+  ownerUsername?: string;
+  planetName?: string;
+  planetTypeId?: string;
+  diameterKm?: number;
+  temperatureMin?: number;
+  temperatureMax?: number;
+  isYours?: boolean;
+  isEmpty?: boolean;
+}
+
 export interface GalaxySystemResponse {
   arm: number;
   system: number;
-  slots: {
-    position: number;
-    kind: "star" | "planet";
-    label: string;
-    ownerUsername?: string;
-    planetName?: string;
-    isYours?: boolean;
-  }[];
+  slots: GalaxySlot[];
+}
+
+export interface GalaxySectorResponse {
+  arm: number;
+  centerSystem: number;
+  systems: GalaxySystemResponse[];
 }

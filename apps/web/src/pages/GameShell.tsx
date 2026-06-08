@@ -8,6 +8,8 @@ import { GalaxyPage } from "./GalaxyPage.js";
 import { OverviewPage } from "./OverviewPage.js";
 import { ResourcesPage } from "./ResourcesPage.js";
 import { ShipyardPage } from "./ShipyardPage.js";
+import { ResearchPage } from "./ResearchPage.js";
+import { AdminPage } from "./AdminPage.js";
 import { StubPage } from "./StubPage.js";
 
 function fmt(n: number) {
@@ -41,8 +43,8 @@ function ShellInner() {
             </span>
             <div className="res">
               <span style={{ color: "#9ca3af" }}>Металл {fmt(p.resources.metal)}</span>
-              <span style={{ color: "#60a5fa" }}>Кристалл {fmt(p.resources.crystal)}</span>
-              <span style={{ color: "#4ade80" }}>Дейтерий {fmt(p.resources.deuterium)}</span>
+              <span style={{ color: "#60a5fa" }}>Минералы {fmt(p.resources.minerals)}</span>
+              <span style={{ color: "#4ade80" }}>Веспен {fmt(p.resources.vespene)}</span>
             </div>
           </>
         )}
@@ -84,6 +86,11 @@ function ShellInner() {
         <NavLink to="/galaxy" className={({ isActive }) => (isActive ? "active" : "")}>
           Галактика
         </NavLink>
+        {u?.isAdmin && (
+          <NavLink to="/admin" className={({ isActive }) => (isActive ? "active" : "")}>
+            Админка
+          </NavLink>
+        )}
       </nav>
 
       <main className="shell-main">
@@ -93,10 +100,11 @@ function ShellInner() {
           <Route path="/resources" element={<ResourcesPage />} />
           <Route path="/shipyard" element={<ShipyardPage />} />
           <Route path="/defense" element={<DefensePage />} />
-          <Route path="/research" element={<StubPage title="Исследования" />} />
+          <Route path="/research" element={<ResearchPage />} />
           <Route path="/fleets" element={<StubPage title="Флоты" />} />
           <Route path="/trade" element={<StubPage title="Торговля" />} />
           <Route path="/galaxy" element={<GalaxyPage />} />
+          <Route path="/admin" element={<AdminPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>

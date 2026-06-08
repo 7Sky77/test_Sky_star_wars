@@ -10,28 +10,61 @@ export function contentDir(): string {
   return path.resolve(__dirname, "..", "..", "..", "content");
 }
 
+async function readJsonFile(dir: string, filename: string): Promise<unknown> {
+  const raw = await readFile(path.join(dir, filename), "utf-8");
+  return JSON.parse(raw);
+}
+
 export async function loadCatalog(): Promise<GameCatalog> {
   const dir = contentDir();
-  const [world, resources, factions, buildings, units, research, defense] =
-    await Promise.all([
-      readFile(path.join(dir, "world.json"), "utf-8"),
-      readFile(path.join(dir, "resources.json"), "utf-8"),
-      readFile(path.join(dir, "factions.json"), "utf-8"),
-      readFile(path.join(dir, "buildings.json"), "utf-8"),
-      readFile(path.join(dir, "units.json"), "utf-8"),
-      readFile(path.join(dir, "research.json"), "utf-8"),
-      readFile(path.join(dir, "defense.json"), "utf-8"),
-    ]);
+  const [
+    world,
+    resources,
+    factions,
+    buildings,
+    units,
+    research,
+    defense,
+    satelliteBuildings,
+    officers,
+    items,
+    abilities,
+    planetTypes,
+  ] = await Promise.all([
+    readJsonFile(dir, "world.json"),
+    readJsonFile(dir, "resources.json"),
+    readJsonFile(dir, "factions.json"),
+    readJsonFile(dir, "buildings.json"),
+    readJsonFile(dir, "units.json"),
+    readJsonFile(dir, "research.json"),
+    readJsonFile(dir, "defense.json"),
+    readJsonFile(dir, "satellite_buildings.json"),
+    readJsonFile(dir, "officers.json"),
+    readJsonFile(dir, "items.json"),
+    readJsonFile(dir, "abilities.json"),
+    readJsonFile(dir, "planet_types.json"),
+  ]);
   const raw = {
-    world: JSON.parse(world),
-    resources: JSON.parse(resources),
-    factions: JSON.parse(factions),
-    buildings: JSON.parse(buildings),
-    units: JSON.parse(units),
-    research: JSON.parse(research),
-    defense: JSON.parse(defense),
+    world,
+    resources,
+    factions,
+    buildings,
+    units,
+    research,
+    defense,
+    satelliteBuildings,
+    officers,
+    items,
+    abilities,
+    planetTypes,
   };
   return catalogSchema.parse(raw);
+}
+
+export function planetTypeMap(
+  catalog: GameCatalog
+): Map<string, (typeof catalog.planetTypes)[0]> {
+  return new Map(catalog.planetTypes.map((t) => [t.id, t]));
 }
 
 export function buildingMap(catalog: GameCatalog): Map<string, (typeof catalog.buildings)[0]> {
@@ -44,4 +77,10 @@ export function fleetUnitMap(catalog: GameCatalog): Map<string, FleetUnitDef> {
 
 export function defenseUnitMap(catalog: GameCatalog): Map<string, FleetUnitDef> {
   return new Map(catalog.defense.map((d) => [d.id, d]));
+}
+
+export function researchMap(
+  catalog: GameCatalog
+): Map<string, (typeof catalog.research)[0]> {
+  return new Map(catalog.research.map((r) => [r.id, r]));
 }

@@ -1,0 +1,56 @@
+[
+  {
+    "id": "orbital_dock",
+    "name": "Орбитальная пристань",
+    "description": "Стыковочный узел для грузовых и пассажирских кораблей на орбите.",
+    "allowedFactions": ["terran"]
+  },
+  {
+    "id": "lunar_base",
+    "name": "Лунная база",
+    "description": "Опорный пункт на спутнике планеты для обороны и логистики.",
+    "allowedFactions": ["terran"]
+  },
+  {
+    "id": "sensor_phalanx",
+    "name": "Сенсорная фаланга",
+    "description": "Дальний радар, отслеживающий движение флотов в соседних системах.",
+    "allowedFactions": ["terran"]
+  },
+  {
+    "id": "teleport_gate",
+    "name": "Врата телепортации",
+    "description": "Мгновенная переброска ресурсов и кораблей между колониями.",
+    "allowedFactions": ["terran"]
+  },
+  {
+    "id": "space_station",
+    "name": "Космостанция",
+    "description": "Стационарная база с ангарами, складами и обороной.",
+    "allowedFactions": ["terran"]
+  },
+  {
+    "id": "grav_cannon",
+    "name": "Гравипушка",
+    "description": "Орбитальное орудие, отталкивающее или притягивающее цели.",
+    "allowedFactions": ["terran"]
+  },
+  {
+    "id": "super_space_station",
+    "name": "Суперкосмостанция",
+    "description": "Крупнейший орбитальный комплекс с расширенными возможностями.",
+    "allowedFactions": ["terran"]
+  },
+  {
+    "id": "alliance_station",
+    "name": "Альянсовая станция",
+    "description": "Общая база союзников для координации и совместной обороны.",
+    "allowedFactions": ["terran"]
+  },
+  {
+    "id": "orbital_bank",
+    "name": "Орбитальный банк",
+    "description": "Хранилище ресурсов вне досягаемости наземных атак.",
+    "allowedFactions": ["terran"]
+  }
+]

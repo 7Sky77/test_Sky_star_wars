@@ -2,71 +2,910 @@
   {
     "id": "metal_mine",
     "name": "Шахта металла",
+    "description": "Основной поставщик сырья для несущих конструкций построек и кораблей. Металл — самое дешёвое сырьё, но его нужно больше всего. Чем глубже шахта, тем больше энергии она потребляет.",
+    "allowedFactions": [
+      "terran"
+    ],
     "maxLevel": 30,
     "costs": [
-      { "resourceId": "metal", "base": 60, "growth": 1.5 },
-      { "resourceId": "crystal", "base": 15, "growth": 1.5 }
+      {
+        "resourceId": "metal",
+        "base": 60
+      },
+      {
+        "resourceId": "minerals",
+        "base": 15
+      }
     ],
-    "upgradeTimeSeconds": { "base": 20, "growth": 1.15 },
+    "upgradeTimeSeconds": {
+      "base": 20,
+      "growth": 1.15
+    },
     "produces": {
       "resourceId": "metal",
-      "amountPerHourBase": 15,
-      "amountPerHourPerLevel": 10
+      "amountCoef": 16,
+      "amountGrowth": 1.088
     },
-    "energyConsumption": { "base": 0, "perLevel": 8 }
+    "energyConsumption": {
+      "coef": 10,
+      "growth": 1.1
+    },
+    "costGrowth": 1.5,
+    "requirements": [
+      {
+        "id": "solar_plant",
+        "level": 1
+      }
+    ]
   },
   {
-    "id": "crystal_mine",
-    "name": "Шахта кристалла",
+    "id": "metal_well",
+    "name": "Колодец металла",
+    "description": "Пробуривается к магматическому ядру планеты и черпает расплавленные руды. Затратнее обычных шахт: чем глубже колодец, тем выше расход энергии.",
+    "allowedFactions": [
+      "terran"
+    ],
     "maxLevel": 30,
     "costs": [
-      { "resourceId": "metal", "base": 50, "growth": 1.5 },
-      { "resourceId": "crystal", "base": 24, "growth": 1.5 }
+      {
+        "resourceId": "metal",
+        "base": 400
+      },
+      {
+        "resourceId": "minerals",
+        "base": 200
+      },
+      {
+        "resourceId": "vespene",
+        "base": 200
+      }
     ],
-    "upgradeTimeSeconds": { "base": 25, "growth": 1.15 },
-    "produces": {
-      "resourceId": "crystal",
-      "amountPerHourBase": 10,
-      "amountPerHourPerLevel": 8
+    "upgradeTimeSeconds": {
+      "base": 30,
+      "growth": 1.15
     },
-    "energyConsumption": { "base": 0, "perLevel": 8 }
+    "produces": {
+      "resourceId": "metal",
+      "amountCoef": 7,
+      "amountPower": 1.7
+    },
+    "energyConsumption": {
+      "coef": 4,
+      "growth": 1.1
+    },
+    "costGrowth": 1.2,
+    "requirements": [
+      {
+        "id": "metal_mine",
+        "level": 3
+      }
+    ]
   },
   {
-    "id": "deuterium_synthesizer",
-    "name": "Синтезатор дейтерия",
-    "maxLevel": 25,
-    "costs": [
-      { "resourceId": "metal", "base": 200, "growth": 1.55 },
-      { "resourceId": "crystal", "base": 100, "growth": 1.55 }
+    "id": "minerals_mine",
+    "name": "Рудник минералов",
+    "description": "Основной поставщик сырья для электронных элементов и сплавов. Минералы нужны для всех кораблей и зданий.",
+    "allowedFactions": [
+      "terran"
     ],
-    "upgradeTimeSeconds": { "base": 40, "growth": 1.18 },
-    "produces": {
-      "resourceId": "deuterium",
-      "amountPerHourBase": 5,
-      "amountPerHourPerLevel": 5
+    "maxLevel": 30,
+    "costs": [
+      {
+        "resourceId": "metal",
+        "base": 48
+      },
+      {
+        "resourceId": "minerals",
+        "base": 24
+      }
+    ],
+    "upgradeTimeSeconds": {
+      "base": 25,
+      "growth": 1.15
     },
-    "energyConsumption": { "base": 0, "perLevel": 15 }
+    "produces": {
+      "resourceId": "minerals",
+      "amountCoef": 10,
+      "amountGrowth": 1.088
+    },
+    "energyConsumption": {
+      "coef": 10,
+      "growth": 1.1
+    },
+    "costGrowth": 1.6,
+    "requirements": [
+      {
+        "id": "solar_plant",
+        "level": 1
+      }
+    ]
+  },
+  {
+    "id": "crystal_lake",
+    "name": "Кристальное озеро",
+    "description": "Искусственный карьер, затопленный водой, для промышленного выращивания минералов. На холодных планетах тратится больше энергии на подогрев.",
+    "allowedFactions": [
+      "terran"
+    ],
+    "maxLevel": 30,
+    "costs": [
+      {
+        "resourceId": "metal",
+        "base": 200
+      },
+      {
+        "resourceId": "minerals",
+        "base": 400
+      },
+      {
+        "resourceId": "vespene",
+        "base": 150
+      }
+    ],
+    "upgradeTimeSeconds": {
+      "base": 30,
+      "growth": 1.15
+    },
+    "produces": {
+      "resourceId": "minerals",
+      "amountCoef": 4.5,
+      "amountPower": 1.7
+    },
+    "energyConsumption": {
+      "coef": 2,
+      "growth": 1.12
+    },
+    "costGrowth": 1.2,
+    "requirements": [
+      {
+        "id": "minerals_mine",
+        "level": 3
+      }
+    ]
+  },
+  {
+    "id": "vespene_extractor",
+    "name": "Скважина газа Веспен",
+    "description": "Тяжёлый газ из недр планеты. Чем глубже скважина, тем выше добыча. Веспен — топливо флота, сырьё исследований и сенсорных систем.",
+    "allowedFactions": [
+      "terran"
+    ],
+    "maxLevel": 30,
+    "costs": [
+      {
+        "resourceId": "metal",
+        "base": 225
+      },
+      {
+        "resourceId": "minerals",
+        "base": 75
+      }
+    ],
+    "upgradeTimeSeconds": {
+      "base": 40,
+      "growth": 1.18
+    },
+    "produces": {
+      "resourceId": "vespene",
+      "amountCoef": 2.5,
+      "amountGrowth": 1.088,
+      "amountRound": "round"
+    },
+    "energyConsumption": {
+      "coef": 20,
+      "growth": 1.1
+    },
+    "costGrowth": 1.5,
+    "requirements": [
+      {
+        "id": "solar_plant",
+        "level": 2
+      }
+    ]
+  },
+  {
+    "id": "geyser",
+    "name": "Гейзер",
+    "description": "Искусственный газовый гейзер выдавливает веспен за счёт большого расхода энергии. На газовых планетах добыча выше.",
+    "allowedFactions": [
+      "terran"
+    ],
+    "maxLevel": 30,
+    "costs": [
+      {
+        "resourceId": "metal",
+        "base": 800
+      },
+      {
+        "resourceId": "minerals",
+        "base": 300
+      },
+      {
+        "resourceId": "vespene",
+        "base": 50
+      }
+    ],
+    "upgradeTimeSeconds": {
+      "base": 35,
+      "growth": 1.15
+    },
+    "produces": {
+      "resourceId": "vespene",
+      "amountCoef": 1.26,
+      "amountPower": 1.7
+    },
+    "energyConsumption": {
+      "coef": 1,
+      "growth": 1.14
+    },
+    "costGrowth": 1.2,
+    "requirements": [
+      {
+        "id": "vespene_extractor",
+        "level": 2
+      }
+    ]
   },
   {
     "id": "solar_plant",
     "name": "Солнечная электростанция",
-    "maxLevel": 25,
-    "costs": [
-      { "resourceId": "metal", "base": 75, "growth": 1.45 },
-      { "resourceId": "crystal", "base": 25, "growth": 1.45 }
+    "description": "Солнечные панели покрывают поверхность и дают энергию шахтам и заводам. Чем дальше планета от звезды, тем ниже выработка.",
+    "allowedFactions": [
+      "terran"
     ],
-    "upgradeTimeSeconds": { "base": 18, "growth": 1.12 },
-    "energyProduction": { "base": 25, "perLevel": 18 }
+    "maxLevel": 30,
+    "costs": [
+      {
+        "resourceId": "metal",
+        "base": 75
+      },
+      {
+        "resourceId": "minerals",
+        "base": 30
+      }
+    ],
+    "upgradeTimeSeconds": {
+      "base": 18,
+      "growth": 1.12
+    },
+    "energyProduction": {
+      "coef": 20,
+      "growth": 1.1
+    },
+    "costGrowth": 1.5
   },
   {
-    "id": "warehouse",
-    "name": "Склад",
-    "maxLevel": 20,
-    "costs": [
-      { "resourceId": "metal", "base": 100, "growth": 1.5 },
-      { "resourceId": "crystal", "base": 40, "growth": 1.5 }
+    "id": "fusion_reactor",
+    "name": "Термоядерная электростанция",
+    "description": "Синтез водорода в гелий даёт стабильную энергию, но расходует веспен на охлаждение и поддержание реакции.",
+    "allowedFactions": [
+      "terran"
     ],
-    "upgradeTimeSeconds": { "base": 30, "growth": 1.14 },
-    "storageBonusAll": { "base": 8000, "perLevel": 6000 }
+    "maxLevel": 30,
+    "costs": [
+      {
+        "resourceId": "metal",
+        "base": 900
+      },
+      {
+        "resourceId": "minerals",
+        "base": 360
+      },
+      {
+        "resourceId": "vespene",
+        "base": 180
+      }
+    ],
+    "upgradeTimeSeconds": {
+      "base": 60,
+      "growth": 1.2
+    },
+    "energyProduction": {
+      "coef": 80,
+      "growth": 1.16
+    },
+    "costGrowth": 1.8,
+    "requirements": [
+      {
+        "id": "energy_tech",
+        "level": 3,
+        "kind": "research"
+      }
+    ]
+  },
+  {
+    "id": "metal_storage",
+    "name": "Хранилище металла",
+    "description": "Склад руды. При переполнении добыча останавливается, излишки со временем теряются.",
+    "allowedFactions": [
+      "terran"
+    ],
+    "maxLevel": 30,
+    "costs": [
+      {
+        "resourceId": "metal",
+        "base": 10000
+      }
+    ],
+    "upgradeTimeSeconds": {
+      "base": 45,
+      "growth": 1.14
+    },
+    "storageBonus": {
+      "resourceId": "metal",
+      "capacityBase": 91437,
+      "capacityGrowth": 1.75
+    },
+    "costGrowth": 2,
+    "requirements": [
+      {
+        "id": "robot_factory",
+        "level": 3
+      }
+    ]
+  },
+  {
+    "id": "minerals_storage",
+    "name": "Хранилище минералов",
+    "description": "Склад минералов. При переполнении добыча останавливается, излишки со временем теряются.",
+    "allowedFactions": [
+      "terran"
+    ],
+    "maxLevel": 30,
+    "costs": [
+      {
+        "resourceId": "metal",
+        "base": 10000
+      },
+      {
+        "resourceId": "minerals",
+        "base": 5000
+      }
+    ],
+    "upgradeTimeSeconds": {
+      "base": 45,
+      "growth": 1.14
+    },
+    "storageBonus": {
+      "resourceId": "minerals",
+      "capacityBase": 91437,
+      "capacityGrowth": 1.75
+    },
+    "costGrowth": 2,
+    "requirements": [
+      {
+        "id": "robot_factory",
+        "level": 3
+      }
+    ]
+  },
+  {
+    "id": "vespene_tank",
+    "name": "Емкость для газа Веспен",
+    "description": "Цилиндры для хранения газа. При переполнении синтез останавливается, излишки испаряются.",
+    "allowedFactions": [
+      "terran"
+    ],
+    "maxLevel": 30,
+    "costs": [
+      {
+        "resourceId": "metal",
+        "base": 10000
+      },
+      {
+        "resourceId": "minerals",
+        "base": 10000
+      }
+    ],
+    "upgradeTimeSeconds": {
+      "base": 45,
+      "growth": 1.14
+    },
+    "storageBonus": {
+      "resourceId": "vespene",
+      "capacityBase": 91437,
+      "capacityGrowth": 1.75
+    },
+    "costGrowth": 2,
+    "requirements": [
+      {
+        "id": "robot_factory",
+        "level": 3
+      }
+    ]
+  },
+  {
+    "id": "metal_hideout",
+    "name": "Тайник для металла",
+    "description": "Скрывает металл от грабителей при атаке и увеличивает вместимость склада.",
+    "allowedFactions": [
+      "terran"
+    ],
+    "maxLevel": 10,
+    "costs": [
+      {
+        "resourceId": "metal",
+        "base": 300
+      },
+      {
+        "resourceId": "minerals",
+        "base": 150
+      }
+    ],
+    "upgradeTimeSeconds": {
+      "base": 25,
+      "growth": 1.12
+    },
+    "storageBonus": {
+      "resourceId": "metal",
+      "base": 0,
+      "perLevel": 10000
+    },
+    "costGrowth": 1.5,
+    "requirements": [
+      {
+        "id": "metal_mine",
+        "level": 6
+      }
+    ]
+  },
+  {
+    "id": "minerals_hideout",
+    "name": "Тайник для минералов",
+    "description": "Скрывает минералы от грабителей при атаке и увеличивает вместимость склада.",
+    "allowedFactions": [
+      "terran"
+    ],
+    "maxLevel": 10,
+    "costs": [
+      {
+        "resourceId": "metal",
+        "base": 300
+      },
+      {
+        "resourceId": "minerals",
+        "base": 150
+      }
+    ],
+    "upgradeTimeSeconds": {
+      "base": 25,
+      "growth": 1.12
+    },
+    "storageBonus": {
+      "resourceId": "minerals",
+      "base": 0,
+      "perLevel": 5000
+    },
+    "costGrowth": 1.5,
+    "requirements": [
+      {
+        "id": "minerals_mine",
+        "level": 4
+      }
+    ]
+  },
+  {
+    "id": "vespene_hideout",
+    "name": "Тайник для веспена",
+    "description": "Скрывает веспен от грабителей при атаке и увеличивает вместимость резервуара.",
+    "allowedFactions": [
+      "terran"
+    ],
+    "maxLevel": 10,
+    "costs": [
+      {
+        "resourceId": "metal",
+        "base": 300
+      },
+      {
+        "resourceId": "minerals",
+        "base": 150
+      }
+    ],
+    "upgradeTimeSeconds": {
+      "base": 25,
+      "growth": 1.12
+    },
+    "storageBonus": {
+      "resourceId": "vespene",
+      "base": 0,
+      "perLevel": 2500
+    },
+    "costGrowth": 1.5,
+    "requirements": [
+      {
+        "id": "vespene_extractor",
+        "level": 2
+      }
+    ]
+  },
+  {
+    "id": "robot_factory",
+    "name": "Фабрика роботов",
+    "description": "Рабочая сила для строительства инфраструктуры. Каждый уровень ускоряет возведение зданий.",
+    "allowedFactions": [
+      "terran"
+    ],
+    "maxLevel": 30,
+    "costs": [
+      {
+        "resourceId": "metal",
+        "base": 400
+      },
+      {
+        "resourceId": "minerals",
+        "base": 120
+      },
+      {
+        "resourceId": "vespene",
+        "base": 200
+      }
+    ],
+    "upgradeTimeSeconds": {
+      "base": 35,
+      "growth": 1.15
+    },
+    "costGrowth": 2
+  },
+  {
+    "id": "shipyard",
+    "name": "Верфь",
+    "description": "Сборка кораблей и обороны, отправка флотов. С нанитовой фабрикой и очередью постройки ускоряет производство.",
+    "allowedFactions": [
+      "terran"
+    ],
+    "maxLevel": 30,
+    "costs": [
+      {
+        "resourceId": "metal",
+        "base": 400
+      },
+      {
+        "resourceId": "minerals",
+        "base": 200
+      },
+      {
+        "resourceId": "vespene",
+        "base": 100
+      }
+    ],
+    "upgradeTimeSeconds": {
+      "base": 40,
+      "growth": 1.15
+    },
+    "costGrowth": 2,
+    "requirements": [
+      {
+        "id": "robot_factory",
+        "level": 1
+      }
+    ]
+  },
+  {
+    "id": "nanite_factory",
+    "name": "Фабрика нанитов",
+    "description": "Рои нанороботов ускоряют строительство зданий, кораблей и обороны — с каждым уровнем вдвое.",
+    "allowedFactions": [
+      "terran"
+    ],
+    "maxLevel": 10,
+    "costs": [
+      {
+        "resourceId": "metal",
+        "base": 1000000
+      },
+      {
+        "resourceId": "minerals",
+        "base": 500000
+      },
+      {
+        "resourceId": "vespene",
+        "base": 100000
+      }
+    ],
+    "upgradeTimeSeconds": {
+      "base": 120,
+      "growth": 1.2
+    },
+    "costGrowth": 2,
+    "requirements": [
+      {
+        "id": "robot_factory",
+        "level": 10
+      },
+      {
+        "id": "computer_tech",
+        "level": 5,
+        "kind": "research"
+      }
+    ]
+  },
+  {
+    "id": "research_lab",
+    "name": "Исследовательская лаборатория",
+    "description": "Открывает технологии и ускоряет исследования. Учёные с разных планет работают над одним проектом.",
+    "allowedFactions": [
+      "terran"
+    ],
+    "maxLevel": 30,
+    "costs": [
+      {
+        "resourceId": "metal",
+        "base": 200
+      },
+      {
+        "resourceId": "minerals",
+        "base": 400
+      },
+      {
+        "resourceId": "vespene",
+        "base": 200
+      }
+    ],
+    "upgradeTimeSeconds": {
+      "base": 40,
+      "growth": 1.15
+    },
+    "costGrowth": 2,
+    "requirements": [
+      {
+        "id": "robot_factory",
+        "level": 1
+      }
+    ]
+  },
+  {
+    "id": "nano_lab",
+    "name": "Нано-лаборатория",
+    "description": "Сокращает время исследований на планете за счёт нанотехнологий.",
+    "allowedFactions": [
+      "terran"
+    ],
+    "maxLevel": 10,
+    "costs": [
+      {
+        "resourceId": "metal",
+        "base": 1500000
+      },
+      {
+        "resourceId": "minerals",
+        "base": 750000
+      },
+      {
+        "resourceId": "vespene",
+        "base": 150000
+      }
+    ],
+    "upgradeTimeSeconds": {
+      "base": 180,
+      "growth": 1.2
+    },
+    "costGrowth": 2,
+    "requirements": [
+      {
+        "id": "research_lab",
+        "level": 10
+      },
+      {
+        "id": "energy_tech",
+        "level": 8,
+        "kind": "research"
+      }
+    ]
+  },
+  {
+    "id": "hangar",
+    "name": "Ангар",
+    "description": "Позволяет укрыть часть флота на планете при атаке. Ёмкость растёт с уровнем ангара.",
+    "allowedFactions": [
+      "terran"
+    ],
+    "maxLevel": 30,
+    "costs": [
+      {
+        "resourceId": "metal",
+        "base": 10000
+      }
+    ],
+    "upgradeTimeSeconds": {
+      "base": 50,
+      "growth": 1.14
+    },
+    "costGrowth": 1.25,
+    "requirements": [
+      {
+        "id": "shipyard",
+        "level": 3
+      }
+    ]
+  },
+  {
+    "id": "radar",
+    "name": "Радар",
+    "description": "Раскрывает видимость в галактике вокруг объекта, на котором построен: 1000 у.км за каждый уровень, с усилением от технологии обнаружения.",
+    "allowedFactions": [
+      "terran"
+    ],
+    "maxLevel": 30,
+    "costs": [
+      {
+        "resourceId": "metal",
+        "base": 400
+      },
+      {
+        "resourceId": "minerals",
+        "base": 800
+      }
+    ],
+    "upgradeTimeSeconds": {
+      "base": 40,
+      "growth": 1.15
+    },
+    "costGrowth": 3,
+    "requirements": [
+      {
+        "id": "robot_factory",
+        "level": 1
+      },
+      {
+        "id": "detection_tech",
+        "level": 1,
+        "kind": "research"
+      }
+    ]
+  },
+  {
+    "id": "missile_silo",
+    "name": "Ракетная шахта",
+    "description": "Хранит межпланетные и перехватывающие ракеты. С каждым уровнем — больше ёмкости.",
+    "allowedFactions": [
+      "terran"
+    ],
+    "maxLevel": 30,
+    "costs": [
+      {
+        "resourceId": "metal",
+        "base": 20000
+      },
+      {
+        "resourceId": "minerals",
+        "base": 20000
+      },
+      {
+        "resourceId": "vespene",
+        "base": 1000
+      }
+    ],
+    "upgradeTimeSeconds": {
+      "base": 90,
+      "growth": 1.18
+    },
+    "costGrowth": 2,
+    "requirements": [
+      {
+        "id": "robot_factory",
+        "level": 4
+      }
+    ]
+  },
+  {
+    "id": "energy_supply_tower",
+    "name": "Башня энергоснабжения",
+    "description": "Увеличивает радиус действия электростанций, позволяя снабжать энергией более удалённые территории.",
+    "allowedFactions": [
+      "terran"
+    ],
+    "maxLevel": 30,
+    "costs": [
+      {
+        "resourceId": "metal",
+        "base": 1000
+      },
+      {
+        "resourceId": "minerals",
+        "base": 100
+      }
+    ],
+    "upgradeTimeSeconds": {
+      "base": 20,
+      "growth": 1.12
+    },
+    "costGrowth": 1
+  },
+  {
+    "id": "nuclear_bunker",
+    "name": "Ядерный бункер",
+    "description": "Подземное хранилище ядерных межпланетных ракет. Запрещённое оружие крупнейших империй.",
+    "allowedFactions": [
+      "terran"
+    ],
+    "maxLevel": 1,
+    "costs": [
+      {
+        "resourceId": "metal",
+        "base": 75000000
+      },
+      {
+        "resourceId": "vespene",
+        "base": 25000000
+      }
+    ],
+    "upgradeTimeSeconds": {
+      "base": 3600,
+      "growth": 1
+    },
+    "costGrowth": 1.00000001,
+    "requirements": [
+      {
+        "id": "rocket_drive",
+        "level": 15,
+        "kind": "research"
+      }
+    ]
+  },
+  {
+    "id": "terraformer",
+    "name": "Терраформер",
+    "description": "Преобразует территории планеты, добавляя поля для построек. Не занимает поле. Потребляет много энергии.",
+    "allowedFactions": [
+      "terran"
+    ],
+    "maxLevel": 30,
+    "costs": [
+      {
+        "resourceId": "metal",
+        "base": 180000
+      },
+      {
+        "resourceId": "minerals",
+        "base": 30000
+      }
+    ],
+    "upgradeTimeSeconds": {
+      "base": 300,
+      "growth": 1.2
+    },
+    "energyConsumption": {
+      "base": 0,
+      "perLevel": 500
+    },
+    "costGrowth": 1.5,
+    "requirements": [
+      {
+        "id": "energy_tech",
+        "level": 10,
+        "kind": "research"
+      }
+    ]
+  },
+  {
+    "id": "psi_disruptor",
+    "name": "Пси дисруптер",
+    "description": "Генерирует ПСИ-волны, замедляя вражеские рои и создавая помехи в локальных координатах.",
+    "allowedFactions": [
+      "terran"
+    ],
+    "maxLevel": 30,
+    "costs": [
+      {
+        "resourceId": "metal",
+        "base": 10000
+      },
+      {
+        "resourceId": "minerals",
+        "base": 6000
+      }
+    ],
+    "upgradeTimeSeconds": {
+      "base": 120,
+      "growth": 1.2
+    },
+    "costGrowth": 2.5,
+    "requirements": [
+      {
+        "id": "research_lab",
+        "level": 2
+      }
+    ]
   }
 ]

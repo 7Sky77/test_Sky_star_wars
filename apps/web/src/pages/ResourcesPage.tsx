@@ -1,7 +1,9 @@
 import { useMemo } from "react";
 import type { GameCatalog } from "@sw/shared";
+import type { PlanetTypeDef } from "@sw/shared";
 import {
-  DEFAULT_STORAGE,
+  computeProductionRatesPerHour,
+  computeResourceCaps,
   energyConsumption,
   energyFromFleetUnits,
   energyProduction,
@@ -9,6 +11,7 @@ import {
   storageBonusAllAmount,
 } from "@sw/shared";
 import { useGame } from "../gameContext.js";
+import { formatDiameterKm, formatTemperatureRange } from "../planetFormat.js";
 
 function fmt(n: number) {
   return Math.floor(n).toLocaleString("ru-RU");
@@ -21,38 +24,26 @@ function fmtRate(n: number) {
 function economyFromState(
   catalog: GameCatalog,
   buildings: { building_id: string; level: number }[],
-  fleetCounts: Map<string, number>
+  fleetCounts: Map<string, number>,
+  planetType: PlanetTypeDef | undefined
 ) {
   const levels = new Map(buildings.map((b) => [b.building_id, b.level]));
-  let produced = 0;
-  let consumed = 0;
-  for (const b of catalog.buildings) {
-    const lv = levels.get(b.id) ?? 0;
-    produced += energyProduction(b, lv);
-    consumed += energyConsumption(b, lv);
-  }
-  produced += energyFromFleetUnits(catalog.units, fleetCounts);
-  const energyFactor = consumed <= 0 ? 1 : Math.min(1, produced / consumed);
+  const {
+    rates: boosted,
+    produced,
+    consumed,
+    energyFactor,
+    baseRates,
+  } = computeProductionRatesPerHour({
+    buildings: catalog.buildings,
+    levels,
+    units: catalog.units,
+    fleetCounts,
+    planetType,
+    world: catalog.world,
+  });
 
-  const rates = { metal: 0, crystal: 0, deuterium: 0 };
-  for (const b of catalog.buildings) {
-    const lv = levels.get(b.id) ?? 0;
-    const p = productionPerHour(b, lv);
-    if (!p) continue;
-    const amt = p.amount * energyFactor;
-    if (p.resourceId === "metal") rates.metal += amt;
-    else if (p.resourceId === "crystal") rates.crystal += amt;
-    else if (p.resourceId === "deuterium") rates.deuterium += amt;
-  }
-
-  const wh = catalog.buildings.find((b) => b.id === "warehouse");
-  const wl = levels.get("warehouse") ?? 0;
-  const extra = wh ? storageBonusAllAmount(wh, wl) : 0;
-  const caps = {
-    metal: DEFAULT_STORAGE.metal + extra,
-    crystal: DEFAULT_STORAGE.crystal + extra,
-    deuterium: DEFAULT_STORAGE.deuterium + extra,
-  };
+  const caps = computeResourceCaps(catalog.buildings, levels);
 
   const rows = catalog.buildings.map((b) => {
     const lv = levels.get(b.id) ?? 0;
@@ -73,7 +64,16 @@ function economyFromState(
     };
   });
 
-  return { produced, consumed, energyFactor, rates, caps, rows, fleetEnergy: energyFromFleetUnits(catalog.units, fleetCounts) };
+  return {
+    produced,
+    consumed,
+    energyFactor,
+    rates: boosted,
+    baseRates,
+    caps,
+    rows,
+    fleetEnergy: energyFromFleetUnits(catalog.units, fleetCounts),
+  };
 }
 
 export function ResourcesPage() {
@@ -85,10 +85,14 @@ export function ResourcesPage() {
     return m;
   }, [state?.units]);
 
+  const planetType = catalog?.planetTypes?.find(
+    (t) => t.id === state?.planet.planetTypeId
+  );
+
   const eco = useMemo(() => {
     if (!catalog || !state) return null;
-    return economyFromState(catalog, state.buildings, fleetCounts);
-  }, [catalog, state, fleetCounts]);
+    return economyFromState(catalog, state.buildings, fleetCounts, planetType);
+  }, [catalog, state, fleetCounts, planetType]);
 
   const res = state?.planet.resources;
   const resMeta = catalog?.resources ?? [];
@@ -155,7 +159,7 @@ export function ResourcesPage() {
             </tr>
           </thead>
           <tbody>
-            {(["metal", "crystal", "deuterium"] as const).map((id) => (
+            {(["metal", "minerals", "vespene"] as const).map((id) => (
               <tr key={id}>
                 <td>{nameFor(id)}</td>
                 <td className="num">{fmt(res?.[id] ?? 0)}</td>
@@ -175,8 +179,37 @@ export function ResourcesPage() {
         </table>
       </section>
 
+      {state?.planet && (
+        <p className="page-lead" style={{ marginTop: "-0.75rem" }}>
+          {planetType && (
+            <>
+              Тип: <strong>{planetType.name}</strong>
+              {planetType.description ? ` — ${planetType.description}` : null}
+              {" · "}
+            </>
+          )}
+          Диаметр: <strong>{formatDiameterKm(state.planet.diameterKm)}</strong>
+          {" · "}
+          Температура:{" "}
+          <strong>
+            {formatTemperatureRange(state.planet.temperatureMin, state.planet.temperatureMax)}
+          </strong>
+        </p>
+      )}
+
       <section className="eco-section">
         <h2>Производство в час (эффективное)</h2>
+        <p className="stub" style={{ marginTop: 0 }}>
+          Базовая добыча планеты (без зданий):{" "}
+          <strong>{fmtRate(eco.baseRates.metal)}</strong> {nameFor("metal")}/ч,{" "}
+          <strong>{fmtRate(eco.baseRates.minerals)}</strong> {nameFor("minerals")}/ч
+          {eco.baseRates.vespene > 0 ? (
+            <>
+              , <strong>{fmtRate(eco.baseRates.vespene)}</strong> {nameFor("vespene")}/ч
+            </>
+          ) : null}
+          .
+        </p>
         <table className="data-table">
           <thead>
             <tr>
@@ -190,12 +223,12 @@ export function ResourcesPage() {
               <td className="num">{fmtRate(eco.rates.metal)}</td>
             </tr>
             <tr>
-              <td>{nameFor("crystal")}</td>
-              <td className="num">{fmtRate(eco.rates.crystal)}</td>
+              <td>{nameFor("minerals")}</td>
+              <td className="num">{fmtRate(eco.rates.minerals)}</td>
             </tr>
             <tr>
-              <td>{nameFor("deuterium")}</td>
-              <td className="num">{fmtRate(eco.rates.deuterium)}</td>
+              <td>{nameFor("vespene")}</td>
+              <td className="num">{fmtRate(eco.rates.vespene)}</td>
             </tr>
           </tbody>
         </table>

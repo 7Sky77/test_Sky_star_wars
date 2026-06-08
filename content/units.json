@@ -1,34 +1,716 @@
 [
   {
+    "id": "espionage_probe",
+    "name": "Шпионский зонд",
+    "description": "Манёвренный зонд для разведки флотов и планет на больших дистанциях. Без брони и оружия — легко уничтожается при обнаружении.",
+    "allowedFactions": [
+      "terran"
+    ],
+    "costs": [
+      {
+        "resourceId": "minerals",
+        "base": 1000
+      },
+      {
+        "resourceId": "vespene",
+        "base": 500
+      }
+    ],
+    "stats": {
+      "armor": 100,
+      "shield": 0,
+      "speed": 500000,
+      "capacity": 5,
+      "fuel": 0.1,
+      "size": "small",
+      "armorType": "light"
+    }
+  },
+  {
     "id": "solar_satellite",
     "name": "Солнечный спутник",
-    "description": "На орбите планеты, даёт 50 энергии за штуку.",
-    "costs": [
-      { "resourceId": "metal", "base": 2000, "growth": 1 },
-      { "resourceId": "crystal", "base": 2000, "growth": 1 },
-      { "resourceId": "deuterium", "base": 500, "growth": 1 }
+    "description": "Орбитальная панель: собирает энергию и передаёт на поверхность. Эффективность зависит от слота планеты. Уязвим в бою, не прячется в ангаре.",
+    "allowedFactions": [
+      "terran"
     ],
-    "buildTimeSeconds": 0,
-    "energyPerUnit": 50
+    "costs": [
+      {
+        "resourceId": "minerals",
+        "base": 2000
+      },
+      {
+        "resourceId": "vespene",
+        "base": 500
+      }
+    ],
+    "energyPerUnit": 50,
+    "stats": {
+      "armor": 200,
+      "shield": 10,
+      "size": "small",
+      "armorType": "light"
+    }
   },
   {
     "id": "small_cargo",
     "name": "Малый транспорт",
-    "description": "Перевозка ресурсов (MVP: только учёт на планете).",
-    "costs": [
-      { "resourceId": "metal", "base": 2000, "growth": 1 },
-      { "resourceId": "crystal", "base": 2000, "growth": 1 }
+    "description": "Грузовик без оружия вместимостью 5000 ресурсов. С импульсным двигателем 5 ур. получает более быстрый двигатель.",
+    "allowedFactions": [
+      "terran"
     ],
-    "buildTimeSeconds": 0
+    "costs": [
+      {
+        "resourceId": "metal",
+        "base": 2000
+      },
+      {
+        "resourceId": "minerals",
+        "base": 2000
+      }
+    ],
+    "stats": {
+      "armor": 400,
+      "shield": 10,
+      "speed": 500,
+      "capacity": 5000,
+      "fuel": 1,
+      "size": "small",
+      "armorType": "light"
+    }
   },
   {
     "id": "large_cargo",
     "name": "Большой транспорт",
-    "description": "Крупный грузовой корабль (MVP: только учёт на планете).",
-    "costs": [
-      { "resourceId": "metal", "base": 6000, "growth": 1 },
-      { "resourceId": "crystal", "base": 6000, "growth": 1 }
+    "description": "Быстрый межпланетный грузовик на реактивном двигателе. Сопровождает флоты при атаках для вывоза ресурсов — без эскорта опасен.",
+    "allowedFactions": [
+      "terran"
     ],
-    "buildTimeSeconds": 0
+    "costs": [
+      {
+        "resourceId": "metal",
+        "base": 10000
+      },
+      {
+        "resourceId": "minerals",
+        "base": 4000
+      }
+    ],
+    "stats": {
+      "armor": 1400,
+      "shield": 25,
+      "speed": 250,
+      "capacity": 25000,
+      "fuel": 3,
+      "size": "medium",
+      "armorType": "light"
+    }
+  },
+  {
+    "id": "recycler",
+    "name": "Переработчик",
+    "description": "Щитовой перевозчик для добычи ресурсов из обломков и космического мусора на астероидах.",
+    "allowedFactions": [
+      "terran"
+    ],
+    "costs": [
+      {
+        "resourceId": "metal",
+        "base": 10000
+      },
+      {
+        "resourceId": "minerals",
+        "base": 6000
+      },
+      {
+        "resourceId": "vespene",
+        "base": 2000
+      }
+    ],
+    "stats": {
+      "armor": 1600,
+      "shield": 10,
+      "speed": 300,
+      "capacity": 20000,
+      "fuel": 40,
+      "size": "small",
+      "armorType": "light"
+    }
+  },
+  {
+    "id": "metal_harvester",
+    "name": "Комбайн для добычи металла",
+    "description": "Сканирует бывшие шахты и собирает металл с поверхности. Производство растёт с уровнем шахты металла. В бой вступает только при атаке объекта стоянки.",
+    "allowedFactions": [
+      "terran"
+    ],
+    "costs": [
+      {
+        "resourceId": "metal",
+        "base": 600000
+      },
+      {
+        "resourceId": "minerals",
+        "base": 500000
+      }
+    ],
+    "stats": {
+      "armor": 110000,
+      "shield": 10,
+      "speed": 25,
+      "capacity": 50000,
+      "fuel": 50000,
+      "size": "flagship",
+      "armorType": "light"
+    }
+  },
+  {
+    "id": "minerals_harvester",
+    "name": "Комбайн для добычи минералов",
+    "description": "Облетает планету и собирает минералы с поверхности и остатков рудников. Эффективность зависит от уровня рудника минералов.",
+    "allowedFactions": [
+      "terran"
+    ],
+    "costs": [
+      {
+        "resourceId": "metal",
+        "base": 1200000
+      },
+      {
+        "resourceId": "minerals",
+        "base": 800000
+      }
+    ],
+    "stats": {
+      "armor": 200000,
+      "shield": 10,
+      "speed": 25,
+      "capacity": 50000,
+      "fuel": 50000,
+      "size": "flagship",
+      "armorType": "light"
+    }
+  },
+  {
+    "id": "vespene_harvester",
+    "name": "Комбайн для добычи Веспена",
+    "description": "Находит самые богатые гейзеры веспена. Производство растёт с уровнем скважины. Потребляет веспен как любой флот.",
+    "allowedFactions": [
+      "terran"
+    ],
+    "costs": [
+      {
+        "resourceId": "metal",
+        "base": 1600000
+      },
+      {
+        "resourceId": "minerals",
+        "base": 1200000
+      }
+    ],
+    "stats": {
+      "armor": 280000,
+      "shield": 10,
+      "speed": 25,
+      "capacity": 50000,
+      "fuel": 50000,
+      "size": "flagship",
+      "armorType": "light"
+    }
+  },
+  {
+    "id": "colony_ship",
+    "name": "Колонизатор",
+    "description": "Вместительный корабль для освоения новых планет. После колонизации разбирается — материалы идут на строительство базы.",
+    "allowedFactions": [
+      "terran"
+    ],
+    "costs": [
+      {
+        "resourceId": "metal",
+        "base": 12000
+      },
+      {
+        "resourceId": "minerals",
+        "base": 26000
+      },
+      {
+        "resourceId": "vespene",
+        "base": 10000
+      }
+    ],
+    "stats": {
+      "armor": 3800,
+      "shield": 100,
+      "speed": 100,
+      "capacity": 100000,
+      "fuel": 30,
+      "size": "medium",
+      "armorType": "reinforced"
+    }
+  },
+  {
+    "id": "fighter",
+    "name": "Истребитель",
+    "description": "Манёвренный корабль, встречается на каждой человеческой планете. Дёшев в производстве, но слабый щит и малая вместимость.",
+    "allowedFactions": [
+      "terran"
+    ],
+    "costs": [
+      {
+        "resourceId": "metal",
+        "base": 3000
+      },
+      {
+        "resourceId": "minerals",
+        "base": 1000
+      },
+      {
+        "resourceId": "vespene",
+        "base": 50
+      }
+    ],
+    "stats": {
+      "armor": 400,
+      "shield": 10,
+      "speed": 700,
+      "capacity": 50,
+      "fuel": 3,
+      "attack": 30,
+      "size": "small",
+      "armorType": "light"
+    }
+  },
+  {
+    "id": "viking",
+    "name": "Викинг",
+    "description": "Мобильный трансформируемый юнит с усиленной бронёй. При атаке садится на поверхность — атака умножается в 10 раз; до 25% уничтоженных можно восстановить.",
+    "allowedFactions": [
+      "terran"
+    ],
+    "costs": [
+      {
+        "resourceId": "metal",
+        "base": 1400
+      },
+      {
+        "resourceId": "minerals",
+        "base": 600
+      },
+      {
+        "resourceId": "vespene",
+        "base": 75
+      }
+    ],
+    "stats": {
+      "armor": 200,
+      "shield": 5,
+      "speed": 150,
+      "capacity": 250,
+      "fuel": 2,
+      "attack": 19,
+      "size": "small",
+      "armorType": "reinforced"
+    }
+  },
+  {
+    "id": "stealth_fighter",
+    "name": "Стелс",
+    "description": "Эволюция истребителя на импульсном двигателе: дороже, но сильнее оружие и щиты. Основа для крейсеров. Способности: Уклонение, Штурм.",
+    "allowedFactions": [
+      "terran"
+    ],
+    "costs": [
+      {
+        "resourceId": "metal",
+        "base": 6000
+      },
+      {
+        "resourceId": "minerals",
+        "base": 4000
+      }
+    ],
+    "stats": {
+      "armor": 1000,
+      "shield": 25,
+      "speed": 600,
+      "capacity": 100,
+      "fuel": 8,
+      "attack": 75,
+      "size": "medium",
+      "armorType": "reinforced"
+    }
+  },
+  {
+    "id": "cruiser",
+    "name": "Крейсер",
+    "description": "Защищённее штурма и вдвое мощнее по огневой мощи. Лучшее оружие против средней обороны; ионные технологии усиливают урон.",
+    "allowedFactions": [
+      "terran"
+    ],
+    "costs": [
+      {
+        "resourceId": "metal",
+        "base": 20000
+      },
+      {
+        "resourceId": "minerals",
+        "base": 5000
+      },
+      {
+        "resourceId": "vespene",
+        "base": 2500
+      }
+    ],
+    "stats": {
+      "armor": 2500,
+      "shield": 50,
+      "speed": 400,
+      "capacity": 800,
+      "fuel": 30,
+      "attack": 250,
+      "size": "medium",
+      "armorType": "reinforced"
+    }
+  },
+  {
+    "id": "battleship",
+    "name": "Линкор",
+    "description": "Ядро флота: тяжёлые орудия, высокая скорость и большой трюм. Сплавы 2511 года не замедляются кислотными спорами.",
+    "allowedFactions": [
+      "terran"
+    ],
+    "costs": [
+      {
+        "resourceId": "metal",
+        "base": 45000
+      },
+      {
+        "resourceId": "minerals",
+        "base": 15000
+      },
+      {
+        "resourceId": "vespene",
+        "base": 250
+      }
+    ],
+    "stats": {
+      "armor": 6000,
+      "shield": 200,
+      "speed": 350,
+      "capacity": 1500,
+      "fuel": 65,
+      "attack": 600,
+      "size": "medium",
+      "armorType": "heavy"
+    }
+  },
+  {
+    "id": "bomber",
+    "name": "Бомбардировщик",
+    "description": "Создан для уничтожения планетарной обороны плазменными бомбами. С гипердвигателем 8 ур. получает его и большую скорость.",
+    "allowedFactions": [
+      "terran"
+    ],
+    "costs": [
+      {
+        "resourceId": "metal",
+        "base": 60000
+      },
+      {
+        "resourceId": "minerals",
+        "base": 20000
+      },
+      {
+        "resourceId": "vespene",
+        "base": 10000
+      }
+    ],
+    "stats": {
+      "armor": 8000,
+      "shield": 1200,
+      "speed": 150,
+      "capacity": 500,
+      "fuel": 100,
+      "attack": 2000,
+      "size": "large",
+      "armorType": "heavy"
+    }
+  },
+  {
+    "id": "battlecruiser",
+    "name": "Линейный крейсер",
+    "description": "Высокотехнологичный корабль для уничтожения атакующих флотов. Лазерное оружие и орудие Ямато; малый трюм, экономичный гипердвигатель.",
+    "allowedFactions": [
+      "terran"
+    ],
+    "costs": [
+      {
+        "resourceId": "metal",
+        "base": 30000
+      },
+      {
+        "resourceId": "minerals",
+        "base": 40000
+      },
+      {
+        "resourceId": "vespene",
+        "base": 14500
+      }
+    ],
+    "stats": {
+      "armor": 7000,
+      "shield": 400,
+      "speed": 300,
+      "capacity": 900,
+      "fuel": 60,
+      "attack": 900,
+      "size": "large",
+      "armorType": "reinforced"
+    }
+  },
+  {
+    "id": "destroyer",
+    "name": "Уничтожитель",
+    "description": "Король среди линкоров: плазменные и гаусс-башни бьют по истребителям с точностью до 99%. Огромный, маломанёвренный, прожорливый.",
+    "allowedFactions": [
+      "terran"
+    ],
+    "costs": [
+      {
+        "resourceId": "metal",
+        "base": 60000
+      },
+      {
+        "resourceId": "minerals",
+        "base": 50000
+      },
+      {
+        "resourceId": "vespene",
+        "base": 15000
+      }
+    ],
+    "stats": {
+      "armor": 11000,
+      "shield": 500,
+      "speed": 250,
+      "capacity": 2000,
+      "fuel": 100,
+      "attack": 1000,
+      "size": "large",
+      "armorType": "heavy"
+    }
+  },
+  {
+    "id": "science_vessel",
+    "name": "Научное судно",
+    "description": "Изначально для экспедиций; позже оснащено глушителями щитов. При экспедиции даёт 10% шанс избежать аномальной зоны.",
+    "allowedFactions": [
+      "terran"
+    ],
+    "costs": [
+      {
+        "resourceId": "metal",
+        "base": 10000
+      },
+      {
+        "resourceId": "minerals",
+        "base": 35000
+      },
+      {
+        "resourceId": "vespene",
+        "base": 20000
+      }
+    ],
+    "stats": {
+      "armor": 4500,
+      "shield": 2000,
+      "speed": 600,
+      "capacity": 600,
+      "fuel": 40,
+      "size": "large",
+      "armorType": "reinforced"
+    }
+  },
+  {
+    "id": "wanderer",
+    "name": "Космический странник",
+    "description": "Корабль отшельников из туманности: гигантская машина для грабежа с параметрами флагмана и огромным трюмом.",
+    "allowedFactions": [
+      "terran"
+    ],
+    "costs": [
+      {
+        "resourceId": "metal",
+        "base": 6000000
+      },
+      {
+        "resourceId": "minerals",
+        "base": 4000000
+      },
+      {
+        "resourceId": "vespene",
+        "base": 3000000
+      }
+    ],
+    "stats": {
+      "armor": 1000000,
+      "shield": 50000,
+      "speed": 150,
+      "capacity": 200000,
+      "fuel": 14000,
+      "attack": 120000,
+      "size": "flagship",
+      "armorType": "reinforced"
+    }
+  },
+  {
+    "id": "death_star",
+    "name": "Звезда смерти",
+    "description": "Гравитонная пушка уничтожает любые корабли и луны. Почти целиком из генераторов энергии — доступна лишь крупнейшим империям. Способность: Уничтожение.",
+    "allowedFactions": [
+      "terran"
+    ],
+    "costs": [
+      {
+        "resourceId": "metal",
+        "base": 5000000
+      },
+      {
+        "resourceId": "minerals",
+        "base": 4000000
+      },
+      {
+        "resourceId": "vespene",
+        "base": 1000000
+      }
+    ],
+    "stats": {
+      "armor": 900000,
+      "shield": 50000,
+      "speed": 40,
+      "capacity": 500000,
+      "fuel": 6000,
+      "attack": 150000,
+      "size": "flagship",
+      "armorType": "heavy"
+    }
+  },
+  {
+    "id": "juggernaut",
+    "name": "Джаггернаут",
+    "description": "Для грабежа, рейдов и переработки обломков: манёвренность при гигантском размере и огромный трюм. Способность: Переработка.",
+    "allowedFactions": [
+      "terran"
+    ],
+    "costs": [
+      {
+        "resourceId": "metal",
+        "base": 80000
+      },
+      {
+        "resourceId": "minerals",
+        "base": 50000
+      },
+      {
+        "resourceId": "vespene",
+        "base": 125000
+      }
+    ],
+    "stats": {
+      "armor": 13000,
+      "shield": 600,
+      "speed": 250,
+      "capacity": 400000,
+      "fuel": 400,
+      "attack": 2400,
+      "size": "large",
+      "armorType": "reinforced"
+    }
+  },
+  {
+    "id": "supernova",
+    "name": "Сверхновая звезда",
+    "description": "Сильнейший флагман людей с гравитационной пушкой нового поколения. Щит восстанавливается вдвое медленнее обычного.",
+    "allowedFactions": [
+      "terran"
+    ],
+    "costs": [
+      {
+        "resourceId": "metal",
+        "base": 20000000
+      },
+      {
+        "resourceId": "minerals",
+        "base": 15000000
+      },
+      {
+        "resourceId": "vespene",
+        "base": 5000000
+      }
+    ],
+    "stats": {
+      "armor": 3500000,
+      "shield": 250000,
+      "speed": 60,
+      "capacity": 1000000,
+      "fuel": 25000,
+      "attack": 400000,
+      "size": "flagship",
+      "armorType": "heavy"
+    }
+  },
+  {
+    "id": "jovian",
+    "name": "Джовиан",
+    "description": "Корабль вавилонской цивилизации — ответвления человечества. Редкий и чрезвычайно опасный флагман.",
+    "allowedFactions": [
+      "terran"
+    ],
+    "costs": [
+      {
+        "resourceId": "metal",
+        "base": 60000000
+      },
+      {
+        "resourceId": "minerals",
+        "base": 40000000
+      },
+      {
+        "resourceId": "vespene",
+        "base": 45000000
+      }
+    ],
+    "stats": {
+      "armor": 10000000,
+      "shield": 300000,
+      "speed": 40,
+      "capacity": 1000000,
+      "fuel": 90000,
+      "attack": 2833333,
+      "size": "flagship",
+      "armorType": "heavy"
+    }
+  },
+  {
+    "id": "nuclear_missile",
+    "name": "Ядерная ракета",
+    "description": "Зачищает вражеский объект: случайно сносит уровни зданий, флота и обороны. Остановить можно только уничтожив бункер-источник.",
+    "allowedFactions": [
+      "terran"
+    ],
+    "costs": [
+      {
+        "resourceId": "metal",
+        "base": 25000000
+      },
+      {
+        "resourceId": "minerals",
+        "base": 25000000
+      },
+      {
+        "resourceId": "vespene",
+        "base": 25000000
+      }
+    ]
   }
 ]

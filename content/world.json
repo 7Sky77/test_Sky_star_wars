@@ -4,5 +4,11 @@
   "minSystem": 1,
   "maxSystem": 50,
   "starSlot": 0,
-  "maxPlanetSlot": 9
+  "maxPlanetSlot": 9,
+  "buildQueueSlots": 3,
+  "baseProductionPerHour": {
+    "metal": 20,
+    "minerals": 10,
+    "vespene": 0
+  }
 }

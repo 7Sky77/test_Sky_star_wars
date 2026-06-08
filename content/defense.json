@@ -2,31 +2,370 @@
   {
     "id": "rocket_launcher",
     "name": "Ракетница",
-    "description": "Планетарная оборона.",
-    "costs": [
-      { "resourceId": "metal", "base": 2000, "growth": 1 },
-      { "resourceId": "crystal", "base": 0, "growth": 1 }
+    "description": "Простая и дешёвая оборона: эволюция баллистики без дальнейшей модернизации. Эффективна против малых флотов, позже — в основном для отвлечения огня. При тяжёлых повреждениях отключается; после боя восстанавливается в ~75% случаев.",
+    "allowedFactions": [
+      "terran"
     ],
-    "buildTimeSeconds": 0
+    "costs": [
+      {
+        "resourceId": "metal",
+        "base": 2000
+      }
+    ],
+    "stats": {
+      "armor": 200,
+      "shield": 40,
+      "attack": 158,
+      "size": "small",
+      "armorType": "light"
+    }
   },
   {
     "id": "light_laser",
     "name": "Лёгкий лазер",
-    "description": "Планетарная оборона.",
-    "costs": [
-      { "resourceId": "metal", "base": 1500, "growth": 1 },
-      { "resourceId": "crystal", "base": 500, "growth": 1 }
+    "description": "Концентрированный фотонный огонь против продвинутых кораблей — эффективнее баллистики. Каждый уровень лазерной технологии усиливает урон.",
+    "allowedFactions": [
+      "terran"
     ],
-    "buildTimeSeconds": 0
+    "costs": [
+      {
+        "resourceId": "metal",
+        "base": 1500
+      },
+      {
+        "resourceId": "minerals",
+        "base": 450
+      }
+    ],
+    "stats": {
+      "armor": 195,
+      "shield": 50,
+      "attack": 162,
+      "size": "small",
+      "armorType": "light"
+    }
   },
   {
     "id": "heavy_laser",
     "name": "Тяжёлый лазер",
-    "description": "Планетарная оборона.",
-    "costs": [
-      { "resourceId": "metal", "base": 6000, "growth": 1 },
-      { "resourceId": "crystal", "base": 2000, "growth": 1 }
+    "description": "Усиленный корпус и наведение: больше энергии на цель, чем у лёгкого лазера. Лазерная технология даёт +2% атаки за уровень. Восстановление после боя — ~75%.",
+    "allowedFactions": [
+      "terran"
     ],
-    "buildTimeSeconds": 0
+    "costs": [
+      {
+        "resourceId": "metal",
+        "base": 6000
+      },
+      {
+        "resourceId": "minerals",
+        "base": 2000
+      }
+    ],
+    "stats": {
+      "armor": 800,
+      "shield": 200,
+      "attack": 650,
+      "size": "small",
+      "armorType": "reinforced"
+    }
+  },
+  {
+    "id": "ion_cannon",
+    "name": "Ионное орудие",
+    "description": "Волна заряженных частиц: ослабляет щиты и бьёт по слабозащищённой электронике. Ионная технология даёт +3% атаки за уровень. Восстановление — ~75%.",
+    "allowedFactions": [
+      "terran"
+    ],
+    "costs": [
+      {
+        "resourceId": "metal",
+        "base": 2000
+      },
+      {
+        "resourceId": "minerals",
+        "base": 6000
+      }
+    ],
+    "stats": {
+      "armor": 800,
+      "shield": 1000,
+      "attack": 500,
+      "size": "small",
+      "armorType": "reinforced"
+    }
+  },
+  {
+    "id": "gauss_cannon",
+    "name": "Пушка Гаусса",
+    "description": "Электромагнитный ускоритель: многотонные снаряды пробивают современную броню и щиты. Восстановление обороны после боя — ~75%.",
+    "allowedFactions": [
+      "terran"
+    ],
+    "costs": [
+      {
+        "resourceId": "metal",
+        "base": 20000
+      },
+      {
+        "resourceId": "minerals",
+        "base": 15000
+      },
+      {
+        "resourceId": "vespene",
+        "base": 500
+      }
+    ],
+    "stats": {
+      "armor": 3500,
+      "shield": 400,
+      "attack": 3214,
+      "size": "medium",
+      "armorType": "heavy"
+    }
+  },
+  {
+    "id": "plasma_turret",
+    "name": "Плазменное орудие",
+    "description": "Термоядерный разогрев вещества до миллионов градусов. Плазменная технология даёт +2% урона за уровень. Восстановление — ~75%.",
+    "allowedFactions": [
+      "terran"
+    ],
+    "costs": [
+      {
+        "resourceId": "metal",
+        "base": 50000
+      },
+      {
+        "resourceId": "minerals",
+        "base": 50000
+      },
+      {
+        "resourceId": "vespene",
+        "base": 19500
+      }
+    ],
+    "stats": {
+      "armor": 10000,
+      "shield": 600,
+      "attack": 11500,
+      "size": "large",
+      "armorType": "heavy"
+    }
+  },
+  {
+    "id": "small_shield_dome",
+    "name": "Малый щитовой купол",
+    "description": "Силовое поле над поселением: поглощает выстрелы и срывает атаки малых флотов. На планете — один купол; на орбитальных станциях (≤100 км) — без лимита, с убывающим бонусом. Самовосстановление 75%.",
+    "allowedFactions": [
+      "terran"
+    ],
+    "costs": [
+      {
+        "resourceId": "metal",
+        "base": 10000
+      },
+      {
+        "resourceId": "minerals",
+        "base": 10000
+      },
+      {
+        "resourceId": "vespene",
+        "base": 500
+      }
+    ],
+    "stats": {
+      "armor": 2000,
+      "shield": 1000,
+      "size": "medium",
+      "armorType": "heavy"
+    }
+  },
+  {
+    "id": "large_shield_dome",
+    "name": "Большой щитовой купол",
+    "description": "Развитие малого купола: поглощает значительно больше энергии атак. Самовосстановление 75%. На орбитальных станциях — без лимита, каждый следующий даёт меньший бонус.",
+    "allowedFactions": [
+      "terran"
+    ],
+    "costs": [
+      {
+        "resourceId": "metal",
+        "base": 50000
+      },
+      {
+        "resourceId": "minerals",
+        "base": 50000
+      },
+      {
+        "resourceId": "vespene",
+        "base": 500
+      }
+    ],
+    "stats": {
+      "armor": 10000,
+      "shield": 5000,
+      "size": "large",
+      "armorType": "heavy"
+    }
+  },
+  {
+    "id": "planetary_shield",
+    "name": "Планетарная защита",
+    "description": "Огромный купол над базой: в бою защищает оборонительные сооружения. Щит восстанавливает 50% за раунд; при уничтожении — 50% шанс самовосстановления. На орбитальных станциях — без лимита.",
+    "allowedFactions": [
+      "terran"
+    ],
+    "costs": [
+      {
+        "resourceId": "metal",
+        "base": 12000000
+      },
+      {
+        "resourceId": "minerals",
+        "base": 4000000
+      },
+      {
+        "resourceId": "vespene",
+        "base": 800000
+      }
+    ],
+    "stats": {
+      "armor": 1600000,
+      "shield": 800000,
+      "attack": 550000,
+      "size": "flagship",
+      "armorType": "heavy"
+    }
+  },
+  {
+    "id": "hydarian_array",
+    "name": "Хайдарианская установка",
+    "description": "Столбовой луч с поверхности: сильнее бьёт по тяжёлой броне. Щит работает только при наличии кристаллов Хайдариан (1 установка = 1 кристалл, без расхода). Самовосстановление 75%.",
+    "allowedFactions": [
+      "terran"
+    ],
+    "costs": [
+      {
+        "resourceId": "metal",
+        "base": 2000000
+      },
+      {
+        "resourceId": "minerals",
+        "base": 1500000
+      },
+      {
+        "resourceId": "vespene",
+        "base": 800000
+      }
+    ],
+    "stats": {
+      "armor": 350000,
+      "shield": 300000,
+      "attack": 425000,
+      "size": "large",
+      "armorType": "heavy"
+    }
+  },
+  {
+    "id": "left_turret",
+    "name": "Левая турель",
+    "description": "Турель космостанции с отличной атакой. Требует энергии контроля (вкл/выкл в разделе сырья). При уничтожении — обломки 25% стоимости. Максимум 1.",
+    "allowedFactions": [
+      "terran"
+    ],
+    "costs": [
+      {
+        "resourceId": "metal",
+        "base": 6700000
+      },
+      {
+        "resourceId": "minerals",
+        "base": 1300000
+      },
+      {
+        "resourceId": "vespene",
+        "base": 175000
+      }
+    ],
+    "stats": {
+      "armor": 800000,
+      "shield": 10000,
+      "attack": 1650000,
+      "size": "large",
+      "armorType": "heavy"
+    }
+  },
+  {
+    "id": "right_turret",
+    "name": "Правая турель",
+    "description": "Турель космостанции с отличной атакой. Требует энергии контроля (вкл/выкл в разделе сырья). При уничтожении — обломки 25% стоимости. Максимум 1.",
+    "allowedFactions": [
+      "terran"
+    ],
+    "costs": [
+      {
+        "resourceId": "metal",
+        "base": 6700000
+      },
+      {
+        "resourceId": "minerals",
+        "base": 1300000
+      },
+      {
+        "resourceId": "vespene",
+        "base": 175000
+      }
+    ],
+    "stats": {
+      "armor": 800000,
+      "shield": 10000,
+      "attack": 1650000,
+      "size": "large",
+      "armorType": "heavy"
+    }
+  },
+  {
+    "id": "missile_interceptor",
+    "name": "Ракета-перехватчик",
+    "description": "Автоматически сбивает входящие межпланетные ракеты: одна перехватная — одна атакующая ракета.",
+    "allowedFactions": [
+      "terran"
+    ],
+    "costs": [
+      {
+        "resourceId": "metal",
+        "base": 6000
+      },
+      {
+        "resourceId": "minerals",
+        "base": 1000
+      }
+    ]
+  },
+  {
+    "id": "interplanetary_missile",
+    "name": "Межпланетная ракета",
+    "description": "Уничтожает оборону на объекте (включая неактивную); сбитая оборона не восстанавливается. Дальность: 100 × (уровень импульсного двигателя)². Останавливается перехватчиком или 2 брудлингами.",
+    "allowedFactions": [
+      "terran"
+    ],
+    "costs": [
+      {
+        "resourceId": "metal",
+        "base": 25000
+      },
+      {
+        "resourceId": "minerals",
+        "base": 2500
+      },
+      {
+        "resourceId": "vespene",
+        "base": 500
+      }
+    ],
+    "stats": {
+      "attack": 20000
+    }
   }
 ]

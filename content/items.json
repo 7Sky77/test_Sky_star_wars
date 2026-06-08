@@ -1,0 +1,62 @@
+[
+  {
+    "id": "diffusion_matrix",
+    "name": "Диффузор",
+    "description": "Устройство, рассеивающее энергию щитов для их укрепления.",
+    "allowedFactions": ["terran"]
+  },
+  {
+    "id": "hyperspectrometer",
+    "name": "Гиперспектрометр",
+    "description": "Сенсор для анализа состава планет и аномалий.",
+    "allowedFactions": ["terran"]
+  },
+  {
+    "id": "artifact_alpha",
+    "name": "Артефакт «Альфа»",
+    "description": "Древний предмет с неизученными свойствами.",
+    "allowedFactions": ["terran"]
+  },
+  {
+    "id": "artifact_beta",
+    "name": "Артефакт «Бета»",
+    "description": "Редкая находка экспедиций, даёт уникальные бонусы.",
+    "allowedFactions": ["terran"]
+  },
+  {
+    "id": "blueprint_ship",
+    "name": "Чертёж корабля",
+    "description": "Схема сборки особого корабля для верфи.",
+    "allowedFactions": ["terran"]
+  },
+  {
+    "id": "blueprint_defense",
+    "name": "Чертёж обороны",
+    "description": "План уникальной оборонительной установки.",
+    "allowedFactions": ["terran"]
+  },
+  {
+    "id": "station_paint",
+    "name": "Покраска космостанции",
+    "description": "Косметический набор для персонализации орбитальной базы.",
+    "allowedFactions": ["terran"]
+  },
+  {
+    "id": "research_contract",
+    "name": "Контракт на исследование",
+    "description": "Ускоряет завершение выбранной технологии.",
+    "allowedFactions": ["terran"]
+  },
+  {
+    "id": "resource_cache",
+    "name": "Кэш ресурсов",
+    "description": "Запечатанный контейнер с металлом, минералами или веспеном.",
+    "allowedFactions": ["terran"]
+  },
+  {
+    "id": "production_booster",
+    "name": "Ускоритель производства",
+    "description": "Временно ускоряет строительство и сборку на планете.",
+    "allowedFactions": ["terran"]
+  }
+]

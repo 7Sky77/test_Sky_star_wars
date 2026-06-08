@@ -1,7 +1,947 @@
 [
   {
+    "id": "computer_tech",
+    "name": "Компьютерная технология",
+    "description": "Расширяет вычислительные мощности: +1 одновременный флот за уровень. Больше флотов — больше налётов и захвата сырья.",
+    "allowedFactions": [
+      "terran"
+    ],
+    "costs": [
+      {
+        "resourceId": "metal",
+        "base": 800
+      },
+      {
+        "resourceId": "minerals",
+        "base": 400
+      },
+      {
+        "resourceId": "vespene",
+        "base": 100
+      }
+    ],
+    "costGrowth": 5
+  },
+  {
+    "id": "rocket_drive",
+    "name": "Ракетный двигатель",
+    "description": "Дешёвый и компактный двигатель отдачи. +3% скорости за уровень: викинг, малый/большой транспорт, истребитель, переработчик, шпионский зонд.",
+    "allowedFactions": [
+      "terran"
+    ],
+    "costs": [
+      {
+        "resourceId": "metal",
+        "base": 400
+      },
+      {
+        "resourceId": "minerals",
+        "base": 600
+      }
+    ],
+    "costGrowth": 2,
+    "requirements": [
+      {
+        "id": "energy_tech",
+        "level": 1
+      }
+    ]
+  },
+  {
+    "id": "impulse_drive",
+    "name": "Импульсный двигатель",
+    "description": "Ядерный разогрев массы. +6% скорости за уровень для крейсера, колонизатора, комбайнов и др.; увеличивает дальность межпланетной ракеты.",
+    "allowedFactions": [
+      "terran"
+    ],
+    "costs": [
+      {
+        "resourceId": "metal",
+        "base": 2000
+      },
+      {
+        "resourceId": "minerals",
+        "base": 4000
+      },
+      {
+        "resourceId": "vespene",
+        "base": 600
+      }
+    ],
+    "costGrowth": 2,
+    "requirements": [
+      {
+        "id": "rocket_drive",
+        "level": 2
+      }
+    ]
+  },
+  {
+    "id": "weapons_tech",
+    "name": "Оружейная технология",
+    "description": "Больше энергии на оружие и точнее наведение. Каждый уровень усиливает вооружение юнитов на 7%.",
+    "allowedFactions": [
+      "terran"
+    ],
+    "costs": [
+      {
+        "resourceId": "metal",
+        "base": 700
+      },
+      {
+        "resourceId": "minerals",
+        "base": 300
+      },
+      {
+        "resourceId": "vespene",
+        "base": 100
+      }
+    ],
+    "costGrowth": 1.9,
+    "requirements": [
+      {
+        "id": "energy_tech",
+        "level": 3
+      }
+    ]
+  },
+  {
+    "id": "yamato_cannon",
+    "name": "Орудие Ямато",
+    "description": "Энергия боя накапливается в конденсаторе; сила удваивается с каждым уровнем. Только на линейном крейсере.",
+    "allowedFactions": [
+      "terran"
+    ],
+    "costs": [
+      {
+        "resourceId": "metal",
+        "base": 8000
+      },
+      {
+        "resourceId": "vespene",
+        "base": 4650
+      }
+    ],
+    "maxLevel": 10,
+    "costGrowth": 6,
+    "requirements": [
+      {
+        "id": "plasma_tech",
+        "level": 2
+      }
+    ],
+    "levelTable": {
+      "valueLabel": "Атака за выстрел",
+      "rows": [
+        {
+          "levels": "1",
+          "value": "250"
+        },
+        {
+          "levels": "2",
+          "value": "500"
+        },
+        {
+          "levels": "3",
+          "value": "1 000"
+        },
+        {
+          "levels": "4",
+          "value": "2 000"
+        },
+        {
+          "levels": "5",
+          "value": "4 000"
+        },
+        {
+          "levels": "6",
+          "value": "8 000"
+        },
+        {
+          "levels": "7",
+          "value": "16 000"
+        },
+        {
+          "levels": "8",
+          "value": "32 000"
+        },
+        {
+          "levels": "9",
+          "value": "64 000"
+        },
+        {
+          "levels": "10",
+          "value": "128 000"
+        }
+      ]
+    }
+  },
+  {
+    "id": "ion_tech",
+    "name": "Ионная технология",
+    "description": "Наводимый луч ускоренных ионов. +3% атаки крейсера, уничтожителя и ионного орудия за уровень. На научном судне открывает ЭМИ-волну и радиацию.",
+    "allowedFactions": [
+      "terran"
+    ],
+    "costs": [
+      {
+        "resourceId": "metal",
+        "base": 1000
+      },
+      {
+        "resourceId": "minerals",
+        "base": 300
+      },
+      {
+        "resourceId": "vespene",
+        "base": 100
+      }
+    ],
+    "costGrowth": 2,
+    "requirements": [
+      {
+        "id": "laser_tech",
+        "level": 5
+      },
+      {
+        "id": "energy_tech",
+        "level": 4
+      }
+    ]
+  },
+  {
+    "id": "expedition_tech",
+    "name": "Экспедиционная технология",
+    "description": "Исследовательские модули для сканирования космоса: заброшенные корабли, ресурсы, кометы, кристаллы Хайдариан. Есть риск потери флота.",
+    "allowedFactions": [
+      "terran"
+    ],
+    "costs": [
+      {
+        "resourceId": "metal",
+        "base": 4000
+      },
+      {
+        "resourceId": "minerals",
+        "base": 8000
+      },
+      {
+        "resourceId": "vespene",
+        "base": 4000
+      }
+    ],
+    "costGrowth": 4,
+    "requirements": [
+      {
+        "id": "shielding_tech",
+        "level": 4,
+        "label": "Эволюция щитов"
+      }
+    ],
+    "levelTable": {
+      "valueLabel": "Количество слотов экспедиции",
+      "rows": [
+        {
+          "levels": "1—2",
+          "value": "1"
+        },
+        {
+          "levels": "3—5",
+          "value": "2"
+        },
+        {
+          "levels": "6—8",
+          "value": "3"
+        },
+        {
+          "levels": "9—11",
+          "value": "4"
+        },
+        {
+          "levels": "12",
+          "value": "5"
+        }
+      ]
+    }
+  },
+  {
+    "id": "rocket_drive_opt",
+    "name": "Оптимизация ракетного двигателя",
+    "description": "−1% расхода веспена на ракетном двигателе за уровень. Викинг, большой транспорт, истребитель, переработчик, шпионский зонд.",
+    "allowedFactions": [
+      "terran"
+    ],
+    "costs": [
+      {
+        "resourceId": "metal",
+        "base": 20000
+      },
+      {
+        "resourceId": "minerals",
+        "base": 20000
+      },
+      {
+        "resourceId": "vespene",
+        "base": 30000
+      }
+    ],
+    "costGrowth": 2,
+    "requirements": [
+      {
+        "id": "rocket_drive",
+        "level": 10
+      }
+    ]
+  },
+  {
+    "id": "colonization",
+    "name": "Колонизационная технология",
+    "description": "Лимит управляемых объектов: +1 планета/храм/ППС, +1 астероид, +3 спутника за уровень. Колонизация — флот со способностью «Колонизация».",
+    "allowedFactions": [
+      "terran"
+    ],
+    "costs": [
+      {
+        "resourceId": "metal",
+        "base": 500
+      },
+      {
+        "resourceId": "minerals",
+        "base": 1000
+      },
+      {
+        "resourceId": "vespene",
+        "base": 500
+      }
+    ],
+    "costGrowth": 6,
+    "requirements": [
+      {
+        "id": "shielding_tech",
+        "level": 4,
+        "label": "Эволюция щитов"
+      },
+      {
+        "id": "armour_tech",
+        "level": 5,
+        "label": "Эволюция структуры"
+      }
+    ],
+    "levelTable": {
+      "valueLabel": "Лимиты (за уровень технологии)",
+      "rows": [
+        {
+          "levels": "1",
+          "value": "+1 планета/храм/ППС, +1 астероид, +3 спутника"
+        },
+        {
+          "levels": "2",
+          "value": "+2 / +2 / +6"
+        },
+        {
+          "levels": "3",
+          "value": "+3 / +3 / +9"
+        }
+      ]
+    }
+  },
+  {
+    "id": "espionage_tech",
+    "name": "Шпионаж",
+    "description": "Новые методы разведки: разница уровней шпионажа определяет обнаружение и полноту отчёта. Ур. 2 — число атакующих; ур. 4 — типы юнитов; ур. 5 — характеристики планеты; ур. 8 — точное число каждого типа; ур. 10 — активность на объекте; ур. 11 — флоты на объекте. +10% ёмкости шпионажа за уровень.",
+    "allowedFactions": [
+      "terran"
+    ],
+    "costs": [
+      {
+        "resourceId": "metal",
+        "base": 200
+      },
+      {
+        "resourceId": "minerals",
+        "base": 1000
+      },
+      {
+        "resourceId": "vespene",
+        "base": 200
+      }
+    ],
+    "costGrowth": 2,
+    "requirements": [
+      {
+        "id": "computer_tech",
+        "level": 3
+      }
+    ]
+  },
+  {
+    "id": "pumping_tech",
+    "name": "Насосная технология",
+    "description": "Повышает эффективность добывающих построек: истощение полей снижается на 1% за уровень. Дополнительные поля на планете: +1 за каждые 3 уровня (инфраструктура до 10), +1 за 2 уровня (с 10), +1 за уровень (с 100).",
+    "allowedFactions": [
+      "terran"
+    ],
+    "costs": [
+      {
+        "resourceId": "metal",
+        "base": 100
+      },
+      {
+        "resourceId": "minerals",
+        "base": 100
+      },
+      {
+        "resourceId": "vespene",
+        "base": 100
+      }
+    ],
+    "maxLevel": 6,
+    "costGrowth": 2,
+    "requirements": [
+      {
+        "id": "plasma_tech",
+        "level": 6
+      }
+    ]
+  },
+  {
+    "id": "hyperspace_drive",
+    "name": "Гиперпространственный двигатель",
+    "description": "Искривление пространства-времени: корабли перемещаются быстрее. +9% скорости за уровень: линкор, бомбардировщик (с 8 ур. импульсного), уничтожитель, линейный крейсер, звезда смерти, сверхновая, джаггернаут, космический странник, джовиан.",
+    "allowedFactions": [
+      "terran"
+    ],
+    "costs": [
+      {
+        "resourceId": "metal",
+        "base": 10000
+      },
+      {
+        "resourceId": "minerals",
+        "base": 20000
+      },
+      {
+        "resourceId": "vespene",
+        "base": 6000
+      }
+    ],
+    "costGrowth": 2,
+    "requirements": [
+      {
+        "id": "hyperspace_tech",
+        "level": 3
+      }
+    ]
+  },
+  {
+    "id": "shielding_tech",
+    "name": "Щитовая технология",
+    "description": "Развитие технологии увеличивает подачу энергии на щиты и защитные экраны. Каждый уровень повышает эффективность корабельных щитов и стационарных генераторов энергополей на 8% от номинала.",
+    "allowedFactions": [
+      "terran"
+    ],
+    "costs": [
+      {
+        "resourceId": "metal",
+        "base": 200
+      },
+      {
+        "resourceId": "minerals",
+        "base": 600
+      }
+    ],
+    "costGrowth": 2,
+    "requirements": [
+      {
+        "id": "energy_tech",
+        "level": 4
+      }
+    ]
+  },
+  {
+    "id": "hyperspace_tech",
+    "name": "Гиперпространственная технология",
+    "description": "Сплетение 4-го и 5-го измерений: двигатели нового поколения и +1% к дальности телепортации Врат и космостанции за уровень.",
+    "allowedFactions": [
+      "terran"
+    ],
+    "costs": [
+      {
+        "resourceId": "minerals",
+        "base": 4000
+      },
+      {
+        "resourceId": "vespene",
+        "base": 2000
+      }
+    ],
+    "costGrowth": 2,
+    "requirements": [
+      {
+        "id": "energy_tech",
+        "level": 5
+      },
+      {
+        "id": "shielding_tech",
+        "level": 5,
+        "label": "Эволюция щитов"
+      }
+    ]
+  },
+  {
+    "id": "plasma_tech",
+    "name": "Плазменная технология",
+    "description": "Развитие ионной технологии: высокоэнергетическая плазма. +2% атаки бомбардировщика, уничтожителя и плазменного орудия за уровень.",
+    "allowedFactions": [
+      "terran"
+    ],
+    "costs": [
+      {
+        "resourceId": "metal",
+        "base": 2000
+      },
+      {
+        "resourceId": "minerals",
+        "base": 4000
+      },
+      {
+        "resourceId": "vespene",
+        "base": 1000
+      }
+    ],
+    "costGrowth": 2,
+    "requirements": [
+      {
+        "id": "energy_tech",
+        "level": 8
+      },
+      {
+        "id": "laser_tech",
+        "level": 10
+      },
+      {
+        "id": "ion_tech",
+        "level": 5
+      }
+    ]
+  },
+  {
+    "id": "superfuel_tech",
+    "name": "Технология сверхтоплива",
+    "description": "Кристаллы Хайдариан в топливе: временно ускоряет флоты и сокращает полёт. С уровнем меньше расход кристаллов и выше КПД.",
+    "allowedFactions": [
+      "terran"
+    ],
+    "costs": [
+      {
+        "resourceId": "metal",
+        "base": 200
+      },
+      {
+        "resourceId": "minerals",
+        "base": 650
+      },
+      {
+        "resourceId": "vespene",
+        "base": 1500
+      }
+    ],
+    "costGrowth": 2.5,
+    "requirements": [
+      {
+        "id": "graviton_tech",
+        "level": 1,
+        "label": "Гравитационная технология"
+      }
+    ]
+  },
+  {
+    "id": "impulse_drive_opt",
+    "name": "Оптимизация импульсного двигателя",
+    "description": "−1% расхода веспена на импульсном двигателе за уровень. Малый транспорт, стелс, крейсер, научное судно, колонизатор, комбайны.",
+    "allowedFactions": [
+      "terran"
+    ],
+    "costs": [
+      {
+        "resourceId": "metal",
+        "base": 30000
+      },
+      {
+        "resourceId": "minerals",
+        "base": 30000
+      },
+      {
+        "resourceId": "vespene",
+        "base": 50000
+      }
+    ],
+    "costGrowth": 2,
+    "requirements": [
+      {
+        "id": "impulse_drive",
+        "level": 10
+      }
+    ]
+  },
+  {
+    "id": "wormhole_tech",
+    "name": "Изучение кротовых нор",
+    "description": "Исследование подпространства для быстрых полётов между двумя точками — невидимы на карте. Кротовые норы открываются парами; есть риск потери флота и индекс стабильности. Дальнейшее развитие: +1% к гравипушке и «Уничтожению» за уровень, −1% к риску потери флота за уровень.",
+    "allowedFactions": [
+      "terran"
+    ],
+    "costs": [
+      {
+        "resourceId": "metal",
+        "base": 10000
+      },
+      {
+        "resourceId": "minerals",
+        "base": 50000
+      },
+      {
+        "resourceId": "vespene",
+        "base": 75000
+      }
+    ],
+    "costGrowth": 5,
+    "requirements": [
+      {
+        "id": "espionage_tech",
+        "level": 6
+      },
+      {
+        "id": "expedition_tech",
+        "level": 4
+      }
+    ],
+    "levelTable": {
+      "valueLabel": "Эффект",
+      "rows": [
+        {
+          "levels": "1",
+          "value": "Виден шанс частичной потери флота"
+        },
+        {
+          "levels": "2",
+          "value": "Приблизительный индекс стабильности"
+        },
+        {
+          "levels": "3",
+          "value": "Координаты точки выхода"
+        },
+        {
+          "levels": "4",
+          "value": "Дистанция полёта"
+        },
+        {
+          "levels": "5",
+          "value": "Точный индекс стабильности"
+        }
+      ]
+    }
+  },
+  {
     "id": "energy_tech",
     "name": "Энергетическая технология",
-    "description": "Заглушка для дерева исследований (MVP: только каталог)."
+    "description": "Дальнейшее развитие систем передачи и хранения энергии — основа многих технологий. Каждый уровень увеличивает выработку энергии на 10%.",
+    "allowedFactions": [
+      "terran"
+    ],
+    "costs": [
+      {
+        "resourceId": "minerals",
+        "base": 800
+      },
+      {
+        "resourceId": "vespene",
+        "base": 400
+      }
+    ],
+    "costGrowth": 2
+  },
+  {
+    "id": "emergency_systems",
+    "name": "Аварийные системы",
+    "description": "Обычно 10% подбитых в бою юнитов возвращаются в верфь; аварийные системы на кораблях повышают шанс выживания. −0.5% потерь флота в боях за каждый уровень технологии.",
+    "allowedFactions": [
+      "terran"
+    ],
+    "costs": [
+      {
+        "resourceId": "metal",
+        "base": 200000
+      },
+      {
+        "resourceId": "minerals",
+        "base": 50000
+      },
+      {
+        "resourceId": "vespene",
+        "base": 500000
+      }
+    ],
+    "costGrowth": 2,
+    "requirements": [
+      {
+        "id": "rocket_drive_opt",
+        "level": 2
+      },
+      {
+        "id": "impulse_drive_opt",
+        "level": 2
+      },
+      {
+        "id": "hyperspace_drive_opt",
+        "level": 2
+      }
+    ]
+  },
+  {
+    "id": "detection_tech",
+    "name": "Технология обнаружения",
+    "description": "Мониторинг ATLAS в научной лаборатории: +5% мощности радара за уровень. Отслеживание активности игроков вашего уровня в радиусе 1000 у.км на 3 мин × уровень (галактика и обзор).",
+    "allowedFactions": [
+      "terran"
+    ],
+    "costs": [
+      {
+        "resourceId": "metal",
+        "base": 350
+      },
+      {
+        "resourceId": "minerals",
+        "base": 450
+      },
+      {
+        "resourceId": "vespene",
+        "base": 900
+      }
+    ],
+    "costGrowth": 3,
+    "requirements": [
+      {
+        "id": "computer_tech",
+        "level": 3
+      }
+    ]
+  },
+  {
+    "id": "armour_tech",
+    "name": "Технология брони",
+    "description": "Специальные сплавы и напыления улучшают броню кораблей. Устойчивость брони увеличивается с каждым уровнем на 8%.",
+    "allowedFactions": [
+      "terran"
+    ],
+    "costs": [
+      {
+        "resourceId": "metal",
+        "base": 900
+      },
+      {
+        "resourceId": "minerals",
+        "base": 100
+      }
+    ],
+    "costGrowth": 2,
+    "requirements": [
+      {
+        "id": "shielding_tech",
+        "level": 2
+      }
+    ]
+  },
+  {
+    "id": "laser_tech",
+    "name": "Лазерная технология",
+    "description": "Лазеры — от оптических компьютеров до тяжёлых установок для резки брони. +2% атаки лазерных оборонительных установок и линейного крейсера за уровень.",
+    "allowedFactions": [
+      "terran"
+    ],
+    "costs": [
+      {
+        "resourceId": "metal",
+        "base": 200
+      },
+      {
+        "resourceId": "minerals",
+        "base": 100
+      }
+    ],
+    "costGrowth": 2,
+    "requirements": [
+      {
+        "id": "weapons_tech",
+        "level": 1,
+        "label": "Эволюция оружия"
+      },
+      {
+        "id": "energy_tech",
+        "level": 2
+      }
+    ]
+  },
+  {
+    "id": "intergalactic_research",
+    "name": "Межгалактическая исследовательская сеть",
+    "description": "Связывает лаборатории на планетах: уровень МИС = число лабораторий в сети, их уровни суммируются для скорости исследований. +1% скорости сбора с полей обломков и комет за уровень.",
+    "allowedFactions": [
+      "terran"
+    ],
+    "costs": [
+      {
+        "resourceId": "metal",
+        "base": 240000
+      },
+      {
+        "resourceId": "minerals",
+        "base": 400000
+      },
+      {
+        "resourceId": "vespene",
+        "base": 160000
+      }
+    ],
+    "costGrowth": 2,
+    "requirements": [
+      {
+        "id": "detection_tech",
+        "level": 5
+      },
+      {
+        "id": "computer_tech",
+        "level": 5
+      },
+      {
+        "id": "hyperspace_tech",
+        "level": 6
+      }
+    ]
+  },
+  {
+    "id": "fortification_tech",
+    "name": "Технология фортификации",
+    "description": "Защита инфраструктуры от атак ксерджей: методы делают здания устойчивее к разрушению. Укрываемая структура растёт по формуле 175 000 × 1.75^(уровень−1).",
+    "allowedFactions": [
+      "terran"
+    ],
+    "costs": [
+      {
+        "resourceId": "metal",
+        "base": 300000
+      },
+      {
+        "resourceId": "vespene",
+        "base": 15000
+      }
+    ],
+    "costGrowth": 1.75,
+    "maxLevel": 10,
+    "requirements": [
+      {
+        "id": "colonization",
+        "level": 3
+      }
+    ],
+    "levelTable": {
+      "valueLabel": "Укрываемая структура",
+      "rows": [
+        {
+          "levels": "1",
+          "value": "175 000"
+        },
+        {
+          "levels": "2",
+          "value": "306 250"
+        },
+        {
+          "levels": "3",
+          "value": "535 938"
+        },
+        {
+          "levels": "4",
+          "value": "937 891"
+        },
+        {
+          "levels": "5",
+          "value": "1 641 309"
+        },
+        {
+          "levels": "6",
+          "value": "2 872 291"
+        },
+        {
+          "levels": "7",
+          "value": "5 026 508"
+        },
+        {
+          "levels": "8",
+          "value": "8 796 389"
+        },
+        {
+          "levels": "9",
+          "value": "15 393 680"
+        },
+        {
+          "levels": "10",
+          "value": "26 938 939"
+        }
+      ]
+    }
+  },
+  {
+    "id": "hyperspace_drive_opt",
+    "name": "Оптимизация гипер двигателя",
+    "description": "−1% расхода веспена на гиперпространственном двигателе за уровень. Линкор, бомбардировщик, уничтожитель, линейный крейсер, звезда смерти, сверхновая, джаггернаут, космический странник, джовиан.",
+    "allowedFactions": [
+      "terran"
+    ],
+    "costs": [
+      {
+        "resourceId": "metal",
+        "base": 30000
+      },
+      {
+        "resourceId": "minerals",
+        "base": 30000
+      },
+      {
+        "resourceId": "vespene",
+        "base": 50000
+      }
+    ],
+    "costGrowth": 2,
+    "requirements": [
+      {
+        "id": "hyperspace_drive",
+        "level": 10
+      }
+    ]
+  },
+  {
+    "id": "graviton_tech",
+    "name": "Гравитационная технология",
+    "description": "Гравитон — частица, создающая искусственные гравитационные поля (чёрные дыры) для уничтожения кораблей и планет. Требует огромной энергии; сила планетарного уничтожения растёт с уровнем.",
+    "allowedFactions": [
+      "terran"
+    ],
+    "costs": [
+      {
+        "resourceId": "energy",
+        "base": 300000
+      }
+    ],
+    "costGrowth": 2,
+    "requirements": [
+      {
+        "id": "wormhole_tech",
+        "level": 1
+      },
+      {
+        "id": "intergalactic_research",
+        "level": 1
+      }
+    ]
   }
 ]

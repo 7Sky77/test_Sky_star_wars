@@ -1,6 +1,6 @@
 [
   { "id": "metal", "name": "Металл", "color": "#9ca3af" },
-  { "id": "crystal", "name": "Кристалл", "color": "#60a5fa" },
-  { "id": "deuterium", "name": "Дейтерий", "color": "#4ade80" },
+  { "id": "minerals", "name": "Минералы", "color": "#60a5fa" },
+  { "id": "vespene", "name": "Веспен", "color": "#4ade80" },
   { "id": "energy", "name": "Энергия", "color": "#fbbf24" }
 ]

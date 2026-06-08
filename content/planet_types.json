@@ -1,0 +1,54 @@
+[
+  {
+    "id": "gas",
+    "name": "Газовые",
+    "nameEn": "gas",
+    "description": "+8% к выработке веспена",
+    "bonuses": { "vespeneProductionPct": 0.08 }
+  },
+  {
+    "id": "water",
+    "name": "Влажные",
+    "nameEn": "water",
+    "description": "+2% к выработке минералов",
+    "bonuses": { "mineralsProductionPct": 0.02 }
+  },
+  {
+    "id": "sand",
+    "name": "Песчаные",
+    "nameEn": "sand",
+    "description": "+3% к выработке металла",
+    "bonuses": { "metalProductionPct": 0.03 }
+  },
+  {
+    "id": "industrial",
+    "name": "Индустриальные",
+    "nameEn": "industrial",
+    "description": "+1% к выработке металла и минералов",
+    "bonuses": { "metalProductionPct": 0.01, "mineralsProductionPct": 0.01 }
+  },
+  {
+    "id": "dry",
+    "name": "Сухие",
+    "nameEn": "dry",
+    "description": "без бонуса"
+  },
+  {
+    "id": "ice",
+    "name": "Ледяные",
+    "nameEn": "ice",
+    "description": "без бонуса"
+  },
+  {
+    "id": "jungle",
+    "name": "Джунгли",
+    "nameEn": "jungle",
+    "description": "без бонуса"
+  },
+  {
+    "id": "normal",
+    "name": "Нормальные",
+    "nameEn": "normal",
+    "description": "без бонуса"
+  }
+]

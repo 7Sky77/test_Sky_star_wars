@@ -1,0 +1,38 @@
+[
+  {
+    "id": "yamato_cannon",
+    "name": "Орудие Ямато",
+    "description": "Мощный залп по одной цели с огромным уроном и долгим перезарядом.",
+    "allowedFactions": ["terran"]
+  },
+  {
+    "id": "combat_command",
+    "name": "Боевое командование",
+    "description": "Временно усиливает весь флот в бою.",
+    "allowedFactions": ["terran"]
+  },
+  {
+    "id": "defensive_matrix",
+    "name": "Защитная матрица",
+    "description": "Создаёт поле, снижающее входящий урон по кораблям.",
+    "allowedFactions": ["terran"]
+  },
+  {
+    "id": "em_pulse",
+    "name": "ЭМИ-импульс",
+    "description": "Выводит из строя вражеские системы на короткое время.",
+    "allowedFactions": ["terran"]
+  },
+  {
+    "id": "precision_strike",
+    "name": "Точный удар",
+    "description": "Следующая атака гарантированно попадает в цель.",
+    "allowedFactions": ["terran"]
+  },
+  {
+    "id": "tactical_retreat",
+    "name": "Тактическое отступление",
+    "description": "Позволяет флоту отойти из боя с минимальными потерями.",
+    "allowedFactions": ["terran"]
+  }
+]

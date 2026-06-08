@@ -28,8 +28,8 @@ export function ShipyardPage() {
       const code = e instanceof Error ? e.message : "error";
       const map: Record<string, string> = {
         not_enough_metal: "Недостаточно металла",
-        not_enough_crystal: "Недостаточно кристалла",
-        not_enough_deuterium: "Недостаточно дейтерия",
+        not_enough_minerals: "Недостаточно минералов",
+        not_enough_vespene: "Недостаточно веспена",
         unknown_unit: "Неизвестный корабль",
       };
       setMsg(map[code] ?? code);
@@ -58,8 +58,8 @@ export function ShipyardPage() {
                 На планете: <strong>{fmt(n)}</strong>
               </div>
               <div className="lv">
-                Металл {fmt(cost.metal ?? 0)} · Кристалл {fmt(cost.crystal ?? 0)} · Дейтерий{" "}
-                {fmt(cost.deuterium ?? 0)}
+                Металл {fmt(cost.metal ?? 0)} · Минералы {fmt(cost.minerals ?? 0)} · Веспен{" "}
+                {fmt(cost.vespene ?? 0)}
               </div>
               <button
                 type="button"

@@ -1,9 +1,23 @@
 import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import bcrypt from "bcryptjs";
 import type Database from "better-sqlite3";
-import type { GameCatalog } from "@sw/shared";
+import { planetParamsForCoords, planetTypeForCoords } from "@sw/shared";
+import { isAdminUsername } from "./adminAuth.js";
+import { registerAdminRoutes } from "./adminRoutes.js";
+import type { CatalogRef } from "./catalogStore.js";
 import { getBearerToken, signUserToken, verifyUserToken } from "./auth.js";
-import { advancePlanet, grantResources, pickStartingCoords, purchaseDefenseUnit, purchaseFleetUnit, queueBuild } from "./engine.js";
+import {
+  advancePlanet,
+  advanceResearch,
+  grantResources,
+  pickStartingCoords,
+  purchaseDefenseUnit,
+  purchaseFleetUnit,
+  queueBuild,
+  queueResearch,
+} from "./engine.js";
+import { buildGalaxySector, buildSystemSlots } from "./galaxy.js";
+import { logGameEvent } from "./gameLog.js";
 
 function requireUser(
   req: FastifyRequest,
@@ -23,24 +37,33 @@ function requireUser(
   return v.userId;
 }
 
+export interface RegisterRoutesOpts {
+  adminEnabled: boolean;
+  adminUsernames: string[];
+}
+
 export function registerRoutes(
   app: FastifyInstance,
   db: Database.Database,
-  catalog: GameCatalog,
+  catalogRef: CatalogRef,
   jwtSecret: string,
-  cheatsEnabled: boolean
+  cheatsEnabled: boolean,
+  opts: RegisterRoutesOpts
 ) {
-  const defaultFaction = catalog.factions[0]?.id ?? "terran";
+  const cat = () => catalogRef.current;
+  const defaultFaction = cat().factions[0]?.id ?? "terran";
 
   app.get("/api/catalog", async (_req, rep) => {
+    const c = cat();
     rep.send({
-      world: catalog.world,
-      resources: catalog.resources,
-      factions: catalog.factions,
-      buildings: catalog.buildings,
-      units: catalog.units,
-      research: catalog.research,
-      defense: catalog.defense,
+      world: c.world,
+      resources: c.resources,
+      factions: c.factions,
+      buildings: c.buildings,
+      units: c.units,
+      research: c.research,
+      defense: c.defense,
+      planetTypes: c.planetTypes,
       cheats: cheatsEnabled ? { grantResources: true } : undefined,
     });
   });
@@ -58,21 +81,38 @@ export function registerRoutes(
       }
       const hash = bcrypt.hashSync(password, 10);
       const now = Date.now();
+      const isAdmin = isAdminUsername(username, opts.adminUsernames) ? 1 : 0;
+      let newUserId = 0;
+      let planetId = 0;
+      let coords = { arm: 0, system: 0, position: 0 };
       try {
         const tx = db.transaction(() => {
           const r = db
             .prepare(
-              `INSERT INTO users (username, password_hash, faction_id, created_at) VALUES (?, ?, ?, ?)`
+              `INSERT INTO users (username, password_hash, faction_id, is_admin, created_at) VALUES (?, ?, ?, ?, ?)`
             )
-            .run(username, hash, defaultFaction, now);
-          const userId = Number(r.lastInsertRowid);
-          const coords = pickStartingCoords(db);
+            .run(username, hash, defaultFaction, isAdmin, now);
+          newUserId = Number(r.lastInsertRowid);
+          coords = pickStartingCoords(db);
+          const planetTypeId = planetTypeForCoords(
+            coords.arm,
+            coords.system,
+            coords.position,
+            cat().planetTypes.map((t) => t.id),
+            cat().world.maxPlanetSlot
+          );
+          const planetParams = planetParamsForCoords(
+            coords.arm,
+            coords.system,
+            coords.position,
+            cat().world.maxPlanetSlot
+          );
           const pr = db
             .prepare(
-              `INSERT INTO planets (user_id, name, arm, system, position, last_processed_at, metal, crystal, deuterium) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`
+              `INSERT INTO planets (user_id, name, arm, system, position, last_processed_at, metal, minerals, vespene, planet_type_id, diameter_km, temperature_min, temperature_max) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
             )
             .run(
-              userId,
+              newUserId,
               "Колония",
               coords.arm,
               coords.system,
@@ -80,9 +120,13 @@ export function registerRoutes(
               now,
               800,
               400,
-              200
+              200,
+              planetTypeId,
+              planetParams.diameterKm,
+              planetParams.temperatureMin,
+              planetParams.temperatureMax
             );
-          const planetId = Number(pr.lastInsertRowid);
+          planetId = Number(pr.lastInsertRowid);
           const insB = db.prepare(
             `INSERT INTO planet_buildings (planet_id, building_id, level) VALUES (?, ?, ?)`
           );
@@ -101,13 +145,25 @@ export function registerRoutes(
         }
         throw e;
       }
-      const row = db
-        .prepare(`SELECT id FROM users WHERE username = ?`)
-        .get(username) as { id: number };
-      const token = signUserToken(row.id, jwtSecret);
+
+      logGameEvent(db, {
+        kind: "auth.register",
+        userId: newUserId,
+        username,
+        planetId,
+        message: `Регистрация: ${username} → [${coords.arm}:${coords.system}:${coords.position}]`,
+        details: { coords, isAdmin: isAdmin === 1 },
+      });
+
+      const token = signUserToken(newUserId, jwtSecret);
       return rep.send({
         token,
-        user: { id: row.id, username, factionId: defaultFaction },
+        user: {
+          id: newUserId,
+          username,
+          factionId: defaultFaction,
+          isAdmin: isAdmin === 1,
+        },
       });
     }
   );
@@ -122,18 +178,36 @@ export function registerRoutes(
       }
       const row = db
         .prepare(
-          `SELECT id, password_hash, faction_id FROM users WHERE username = ?`
+          `SELECT id, password_hash, faction_id, is_admin FROM users WHERE username = ?`
         )
         .get(username) as
-        | { id: number; password_hash: string; faction_id: string }
+        | {
+            id: number;
+            password_hash: string;
+            faction_id: string;
+            is_admin: number;
+          }
         | undefined;
       if (!row || !bcrypt.compareSync(password, row.password_hash)) {
         return rep.code(401).send({ error: "invalid_credentials" });
       }
+
+      logGameEvent(db, {
+        kind: "auth.login",
+        userId: row.id,
+        username,
+        message: `Вход: ${username}`,
+      });
+
       const token = signUserToken(row.id, jwtSecret);
       return rep.send({
         token,
-        user: { id: row.id, username, factionId: row.faction_id },
+        user: {
+          id: row.id,
+          username,
+          factionId: row.faction_id,
+          isAdmin: row.is_admin === 1,
+        },
       });
     }
   );
@@ -143,7 +217,7 @@ export function registerRoutes(
     if (userId == null) return;
     const planet = db
       .prepare(
-        `SELECT id, name, arm, system, position, metal, crystal, deuterium, last_processed_at FROM planets WHERE user_id = ? LIMIT 1`
+        `SELECT id, name, arm, system, position, metal, minerals, vespene, last_processed_at, planet_type_id, diameter_km, temperature_min, temperature_max FROM planets WHERE user_id = ? LIMIT 1`
       )
       .get(userId) as
       | {
@@ -153,19 +227,24 @@ export function registerRoutes(
           system: number;
           position: number;
           metal: number;
-          crystal: number;
-          deuterium: number;
+          minerals: number;
+          vespene: number;
           last_processed_at: number;
+          planet_type_id: string;
+          diameter_km: number;
+          temperature_min: number;
+          temperature_max: number;
         }
       | undefined;
     if (!planet) return rep.code(404).send({ error: "no_planet" });
 
     const now = Date.now();
-    advancePlanet(db, catalog, planet.id, now);
+    advancePlanet(db, cat(), planet.id, now);
+    advanceResearch(db, userId, now);
 
     const p2 = db
       .prepare(
-        `SELECT id, name, arm, system, position, metal, crystal, deuterium FROM planets WHERE id = ?`
+        `SELECT id, name, arm, system, position, metal, minerals, vespene, planet_type_id, diameter_km, temperature_min, temperature_max FROM planets WHERE id = ?`
       )
       .get(planet.id) as typeof planet;
 
@@ -188,8 +267,8 @@ export function registerRoutes(
     }[];
 
     const userRow = db
-      .prepare(`SELECT username, faction_id FROM users WHERE id = ?`)
-      .get(userId) as { username: string; faction_id: string };
+      .prepare(`SELECT username, faction_id, is_admin FROM users WHERE id = ?`)
+      .get(userId) as { username: string; faction_id: string; is_admin: number };
 
     const units = db
       .prepare(`SELECT unit_id, quantity FROM planet_units WHERE planet_id = ?`)
@@ -199,11 +278,30 @@ export function registerRoutes(
       .prepare(`SELECT defense_id, quantity FROM planet_defense WHERE planet_id = ?`)
       .all(planet.id) as { defense_id: string; quantity: number }[];
 
+    const research = db
+      .prepare(`SELECT research_id, level FROM user_research WHERE user_id = ?`)
+      .all(userId) as { research_id: string; level: number }[];
+
+    const researchQueue = db
+      .prepare(
+        `SELECT id, research_id, target_level, started_at, finishes_at FROM research_queue WHERE user_id = ? LIMIT 1`
+      )
+      .get(userId) as
+      | {
+          id: number;
+          research_id: string;
+          target_level: number;
+          started_at: number;
+          finishes_at: number;
+        }
+      | undefined;
+
     return rep.send({
       serverTime: now,
       user: {
         username: userRow.username,
         factionId: userRow.faction_id,
+        isAdmin: userRow.is_admin === 1,
       },
       planet: {
         id: p2.id,
@@ -211,13 +309,19 @@ export function registerRoutes(
         arm: p2.arm,
         system: p2.system,
         position: p2.position,
+        planetTypeId: p2.planet_type_id,
+        diameterKm: p2.diameter_km,
+        temperatureMin: p2.temperature_min,
+        temperatureMax: p2.temperature_max,
         resources: {
           metal: p2.metal,
-          crystal: p2.crystal,
-          deuterium: p2.deuterium,
+          minerals: p2.minerals,
+          vespene: p2.vespene,
         },
       },
       buildings,
+      research,
+      researchQueue: researchQueue ?? null,
       buildQueue: queue,
       units,
       defense: defenseRows,
@@ -236,9 +340,44 @@ export function registerRoutes(
     if (!planet) return rep.code(404).send({ error: "no_planet" });
 
     const now = Date.now();
-    advancePlanet(db, catalog, planet.id, now);
-    const r = queueBuild(db, catalog, planet.id, buildingId, now);
+    advancePlanet(db, cat(), planet.id, now);
+    const r = queueBuild(db, cat(), planet.id, buildingId, userId, now);
     if (!r.ok) return rep.code(400).send({ error: r.error });
+
+    logGameEvent(db, {
+      kind: "build.queue",
+      userId,
+      planetId: planet.id,
+      message: `Постройка в очередь: ${buildingId}`,
+      details: { buildingId },
+    });
+    return rep.send({ ok: true });
+  });
+
+  app.post<{ Body: { researchId?: string } }>("/api/game/research", (req, rep) => {
+    const userId = requireUser(req, rep, jwtSecret);
+    if (userId == null) return;
+    const researchId = req.body?.researchId;
+    if (!researchId) return rep.code(400).send({ error: "missing_researchId" });
+
+    const planet = db
+      .prepare(`SELECT id FROM planets WHERE user_id = ? LIMIT 1`)
+      .get(userId) as { id: number } | undefined;
+    if (!planet) return rep.code(404).send({ error: "no_planet" });
+
+    const now = Date.now();
+    advancePlanet(db, cat(), planet.id, now);
+    advanceResearch(db, userId, now);
+    const r = queueResearch(db, cat(), userId, planet.id, researchId, now);
+    if (!r.ok) return rep.code(400).send({ error: r.error });
+
+    logGameEvent(db, {
+      kind: "research.queue",
+      userId,
+      planetId: planet.id,
+      message: `Исследование в очередь: ${researchId}`,
+      details: { researchId },
+    });
     return rep.send({ ok: true });
   });
 
@@ -254,8 +393,16 @@ export function registerRoutes(
     if (!planet) return rep.code(404).send({ error: "no_planet" });
 
     const now = Date.now();
-    const r = purchaseFleetUnit(db, catalog, planet.id, unitId, now);
+    const r = purchaseFleetUnit(db, cat(), planet.id, unitId, now);
     if (!r.ok) return rep.code(400).send({ error: r.error });
+
+    logGameEvent(db, {
+      kind: "fleet.purchase",
+      userId,
+      planetId: planet.id,
+      message: `Покупка корабля: ${unitId}`,
+      details: { unitId },
+    });
     return rep.send({ ok: true });
   });
 
@@ -271,10 +418,29 @@ export function registerRoutes(
     if (!planet) return rep.code(404).send({ error: "no_planet" });
 
     const now = Date.now();
-    const r = purchaseDefenseUnit(db, catalog, planet.id, defenseId, now);
+    const r = purchaseDefenseUnit(db, cat(), planet.id, defenseId, now);
     if (!r.ok) return rep.code(400).send({ error: r.error });
+
+    logGameEvent(db, {
+      kind: "defense.purchase",
+      userId,
+      planetId: planet.id,
+      message: `Покупка обороны: ${defenseId}`,
+      details: { defenseId },
+    });
     return rep.send({ ok: true });
   });
+
+  function parseGalaxyCoord(
+    raw: string | undefined,
+    fallback: number,
+    min: number,
+    max: number
+  ): number {
+    const n = Number(raw ?? fallback);
+    if (!Number.isFinite(n)) return fallback;
+    return Math.min(max, Math.max(min, Math.floor(n)));
+  }
 
   app.get<{ Querystring: { arm?: string; system?: string } }>(
     "/api/galaxy/system",
@@ -282,71 +448,54 @@ export function registerRoutes(
       const userId = requireUser(req, rep, jwtSecret);
       if (userId == null) return;
 
-      const w = catalog.world;
-      let arm = Number(req.query.arm ?? w.minArm);
-      let system = Number(req.query.system ?? w.minSystem);
-      arm = Math.min(w.maxArm, Math.max(w.minArm, arm));
-      system = Math.min(w.maxSystem, Math.max(w.minSystem, system));
+      const w = cat().world;
+      const arm = parseGalaxyCoord(req.query.arm, w.minArm, w.minArm, w.maxArm);
+      const system = parseGalaxyCoord(
+        req.query.system,
+        w.minSystem,
+        w.minSystem,
+        w.maxSystem
+      );
 
-      const rows = db
-        .prepare(
-          `SELECT p.position, p.name AS planet_name, p.user_id, u.username
-           FROM planets p JOIN users u ON u.id = p.user_id
-           WHERE p.arm = ? AND p.system = ? AND p.position >= 1 AND p.position <= ?
-           ORDER BY p.position`
-        )
-        .all(arm, system, w.maxPlanetSlot) as {
-        position: number;
-        planet_name: string;
-        user_id: number;
-        username: string;
-      }[];
-
-      const byPos = new Map<number, (typeof rows)[0]>();
-      for (const r of rows) byPos.set(r.position, r);
-
-      const slots: {
-        position: number;
-        kind: "star" | "planet";
-        label: string;
-        ownerUsername?: string;
-        planetName?: string;
-        isYours?: boolean;
-      }[] = [];
-
-      slots.push({
-        position: w.starSlot,
-        kind: "star",
-        label: "Звезда",
-      });
-
-      for (let pos = 1; pos <= w.maxPlanetSlot; pos++) {
-        const hit = byPos.get(pos);
-        if (hit) {
-          slots.push({
-            position: pos,
-            kind: "planet",
-            label: `${arm}:${system}:${pos}`,
-            ownerUsername: hit.username,
-            planetName: hit.planet_name,
-            isYours: hit.user_id === userId,
-          });
-        } else {
-          slots.push({
-            position: pos,
-            kind: "planet",
-            label: `${arm}:${system}:${pos}`,
-          });
-        }
+      try {
+        return rep.send(buildSystemSlots(db, cat(), arm, system, userId));
+      } catch (e) {
+        req.log.error(e);
+        return rep.code(500).send({ error: "galaxy_load_failed" });
       }
+    }
+  );
 
-      return rep.send({ arm, system, slots });
+  app.get<{ Querystring: { arm?: string; system?: string; span?: string } }>(
+    "/api/galaxy/sector",
+    (req, rep) => {
+      const userId = requireUser(req, rep, jwtSecret);
+      if (userId == null) return;
+
+      const w = cat().world;
+      const arm = parseGalaxyCoord(req.query.arm, w.minArm, w.minArm, w.maxArm);
+      const system = parseGalaxyCoord(
+        req.query.system,
+        w.minSystem,
+        w.minSystem,
+        w.maxSystem
+      );
+      const span = parseGalaxyCoord(req.query.span, 7, 3, 15);
+
+      try {
+        return rep.send(
+          buildGalaxySector(db, cat(), arm, system, userId, span)
+        );
+      } catch (e) {
+        req.log.error(e);
+        return rep.code(500).send({ error: "galaxy_load_failed" });
+      }
     }
   );
 
   if (cheatsEnabled) {
     app.post<{
-      Body: { metal?: unknown; crystal?: unknown; deuterium?: unknown };
+      Body: { metal?: unknown; minerals?: unknown; vespene?: unknown };
     }>("/api/game/dev/grant-resources", (req, rep) => {
       const userId = requireUser(req, rep, jwtSecret);
       if (userId == null) return;
@@ -357,9 +506,9 @@ export function registerRoutes(
         return Math.floor(n);
       };
       const metal = parse(req.body?.metal);
-      const crystal = parse(req.body?.crystal);
-      const deuterium = parse(req.body?.deuterium);
-      if (metal === 0 && crystal === 0 && deuterium === 0) {
+      const minerals = parse(req.body?.minerals);
+      const vespene = parse(req.body?.vespene);
+      if (metal === 0 && minerals === 0 && vespene === 0) {
         return rep.code(400).send({ error: "nothing_to_grant" });
       }
 
@@ -368,9 +517,25 @@ export function registerRoutes(
         .get(userId) as { id: number } | undefined;
       if (!planet) return rep.code(404).send({ error: "no_planet" });
 
-      const r = grantResources(db, catalog, planet.id, { metal, crystal, deuterium }, Date.now());
+      const r = grantResources(
+        db,
+        cat(),
+        planet.id,
+        { metal, minerals, vespene },
+        Date.now()
+      );
       if (!r.ok) return rep.code(400).send({ error: r.error });
+
+      logGameEvent(db, {
+        kind: "cheat.grant",
+        userId,
+        planetId: planet.id,
+        message: `Начисление ресурсов: +${metal}M +${minerals}Mi +${vespene}V`,
+        details: { metal, minerals, vespene },
+      });
       return rep.send({ ok: true });
     });
   }
+
+  registerAdminRoutes(app, db, catalogRef, jwtSecret, opts.adminEnabled);
 }

@@ -5,8 +5,8 @@ import { useGame } from "../gameContext.js";
 export function DevGrantPanel() {
   const { catalog, refresh } = useGame();
   const [metal, setMetal] = useState("50000");
-  const [crystal, setCrystal] = useState("25000");
-  const [deuterium, setDeuterium] = useState("10000");
+  const [minerals, setMinerals] = useState("25000");
+  const [vespene, setVespene] = useState("10000");
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
 
@@ -25,8 +25,8 @@ export function DevGrantPanel() {
         method: "POST",
         json: {
           metal: Number(metal) || 0,
-          crystal: Number(crystal) || 0,
-          deuterium: Number(deuterium) || 0,
+          minerals: Number(minerals) || 0,
+          vespene: Number(vespene) || 0,
         },
       });
       await refresh();
@@ -58,21 +58,21 @@ export function DevGrantPanel() {
           />
         </label>
         <label>
-          Кристалл
+          Минералы
           <input
             type="number"
             min={0}
-            value={crystal}
-            onChange={(e) => setCrystal(e.target.value)}
+            value={minerals}
+            onChange={(e) => setMinerals(e.target.value)}
           />
         </label>
         <label>
-          Дейтерий
+          Веспен
           <input
             type="number"
             min={0}
-            value={deuterium}
-            onChange={(e) => setDeuterium(e.target.value)}
+            value={vespene}
+            onChange={(e) => setVespene(e.target.value)}
           />
         </label>
         <button type="button" className="btn dev-grant-btn" disabled={busy} onClick={() => void grant()}>

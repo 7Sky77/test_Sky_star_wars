@@ -6,7 +6,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { apiFetch } from "./api.js";
+import { apiFetch, setToken } from "./api.js";
 import type { GameCatalogWithCheats, GameState } from "./types.js";
 
 interface GameCtx {
@@ -15,6 +15,7 @@ interface GameCtx {
   loading: boolean;
   error: string | null;
   refresh: () => Promise<void>;
+  reloadCatalog: () => Promise<void>;
 }
 
 const Ctx = createContext<GameCtx | null>(null);
@@ -31,8 +32,14 @@ export function GameProvider({ children }: { children: ReactNode }) {
       try {
         const c = await apiFetch<GameCatalogWithCheats>("/api/catalog");
         if (alive) setCatalog(c);
-      } catch {
-        if (alive) setError("Каталог не загрузился");
+      } catch (e) {
+        if (!alive) return;
+        const code = e instanceof Error ? e.message : "";
+        setError(
+          code.startsWith("http_") || code === "Failed to fetch"
+            ? "Сервер не запущен — в терминале: npm run dev"
+            : "Каталог не загрузился"
+        );
       }
     })();
     return () => {
@@ -40,13 +47,32 @@ export function GameProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
+  const reloadCatalog = useCallback(async () => {
+    try {
+      const c = await apiFetch<GameCatalogWithCheats>("/api/catalog");
+      setCatalog(c);
+    } catch {
+      setError("Каталог не загрузился");
+    }
+  }, []);
+
   const refresh = useCallback(async () => {
     try {
       const s = await apiFetch<GameState>("/api/game/state");
       setState(s);
       setError(null);
-    } catch {
-      setError("Состояние игры недоступно");
+    } catch (e) {
+      const code = e instanceof Error ? e.message : "";
+      if (code === "http_401") {
+        setToken(null);
+        window.location.href = "/login";
+        return;
+      }
+      setError(
+        code === "http_503" || code.startsWith("http_5")
+          ? "Сервер недоступен — запустите npm run dev"
+          : "Состояние игры недоступно"
+      );
     } finally {
       setLoading(false);
     }
@@ -62,7 +88,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
   }, [refresh]);
 
   return (
-    <Ctx.Provider value={{ catalog, state, loading, error, refresh }}>
+    <Ctx.Provider value={{ catalog, state, loading, error, refresh, reloadCatalog }}>
       {children}
     </Ctx.Provider>
   );
