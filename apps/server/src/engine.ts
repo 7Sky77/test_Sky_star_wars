@@ -13,8 +13,8 @@ import {
 } from "@sw/shared";
 import {
   buildingMap,
-  fleetUnitMap,
   defenseUnitMap,
+  fleetUnitMap,
   planetTypeMap,
   researchMap,
 } from "./catalog.js";

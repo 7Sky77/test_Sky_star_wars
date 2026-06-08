@@ -1,4 +1,12 @@
 import { useEffect, useState } from "react";
+import type { SpecializationModifier } from "@sw/shared";
+import { ARMOR_TYPE_LABELS_RU, SIZE_LABELS_RU, UNIT_ARMOR_TYPES, UNIT_SIZES } from "@sw/shared";
+import {
+  AdminSpecializationModifiersTable,
+  modifierToRow,
+  rowsToModifiers,
+  type ModifierRow,
+} from "../components/AdminSpecializationModifiersTable.js";
 
 type CatalogSection =
   | "buildings"
@@ -105,6 +113,7 @@ function buildPatch(
     statAttack: string;
     statSize: string;
     statArmorType: string;
+    specializationRows: ModifierRow[];
     bonusMetal: string;
     bonusMinerals: string;
     bonusVespene: string;
@@ -180,9 +189,13 @@ function buildPatch(
     setStat("capacity", fields.statCapacity);
     setStat("fuel", fields.statFuel);
     setStat("attack", fields.statAttack);
-    setStat("size", fields.statSize, false);
-    setStat("armorType", fields.statArmorType, false);
+    if (fields.statSize === "") delete stats.size;
+    else setStat("size", fields.statSize, false);
+    if (fields.statArmorType === "") delete stats.armorType;
+    else setStat("armorType", fields.statArmorType, false);
     if (Object.keys(stats).length > 0) patch.stats = stats;
+    const specialization = rowsToModifiers(fields.specializationRows);
+    patch.specialization = specialization.length > 0 ? specialization : [];
   }
 
   if (section === "planetTypes") {
@@ -242,6 +255,7 @@ export function AdminCatalogForm({
   const [statAttack, setStatAttack] = useState("");
   const [statSize, setStatSize] = useState("");
   const [statArmorType, setStatArmorType] = useState("");
+  const [specializationRows, setSpecializationRows] = useState<ModifierRow[]>([]);
   const [bonusMetal, setBonusMetal] = useState("");
   const [bonusMinerals, setBonusMinerals] = useState("");
   const [bonusVespene, setBonusVespene] = useState("");
@@ -281,6 +295,8 @@ export function AdminCatalogForm({
     setStatAttack(nstr(s.attack));
     setStatSize(nstr(s.size));
     setStatArmorType(nstr(s.armorType));
+    const spec = (item.specialization ?? []) as SpecializationModifier[];
+    setSpecializationRows(spec.map(modifierToRow));
     const b = item.bonuses ?? {};
     setBonusMetal(b.metalProductionPct != null ? String(b.metalProductionPct * 100) : "");
     setBonusMinerals(
@@ -326,6 +342,7 @@ export function AdminCatalogForm({
       statAttack,
       statSize,
       statArmorType,
+      specializationRows,
       bonusMetal,
       bonusMinerals,
       bonusVespene,
@@ -499,13 +516,32 @@ export function AdminCatalogForm({
             <NumInput label="Атака" value={statAttack} onChange={setStatAttack} />
             <label className="admin-num-field">
               <span>Размер</span>
-              <input value={statSize} onChange={(e) => setStatSize(e.target.value)} />
+              <select value={statSize} onChange={(e) => setStatSize(e.target.value)}>
+                <option value="">—</option>
+                {UNIT_SIZES.map((id) => (
+                  <option key={id} value={id}>
+                    {SIZE_LABELS_RU[id]}
+                  </option>
+                ))}
+              </select>
             </label>
             <label className="admin-num-field">
               <span>Тип брони</span>
-              <input value={statArmorType} onChange={(e) => setStatArmorType(e.target.value)} />
+              <select value={statArmorType} onChange={(e) => setStatArmorType(e.target.value)}>
+                <option value="">—</option>
+                {UNIT_ARMOR_TYPES.map((id) => (
+                  <option key={id} value={id}>
+                    {ARMOR_TYPE_LABELS_RU[id]}
+                  </option>
+                ))}
+              </select>
             </label>
           </div>
+
+          <AdminSpecializationModifiersTable
+            rows={specializationRows}
+            onChange={setSpecializationRows}
+          />
         </>
       )}
 

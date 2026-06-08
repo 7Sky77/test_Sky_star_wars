@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { flatPurchaseCost } from "@sw/shared";
 import { apiFetch } from "../api.js";
+import { UnitSpecializationInfo } from "../components/UnitSpecializationInfo.js";
 import { useGame } from "../gameContext.js";
 
 function fmt(n: number) {
@@ -38,22 +39,29 @@ export function ShipyardPage() {
     }
   }
 
+  if (!catalog) return null;
+
   return (
     <div>
       <h1 className="page-title">Верфь</h1>
       <p className="page-lead">
-        Постройка кораблей на планете (MVP: сразу после оплаты). Солнечный спутник даёт{" "}
-        <strong>50</strong> энергии за штуку на орбите.
+        Постройка кораблей на планете (MVP: сразу после оплаты). Специализация задаётся в админке
+        для каждого типа корабля. Солнечный спутник даёт <strong>50</strong> энергии за штуку
+        на орбите.
       </p>
       {msg && <div className="error-msg">{msg}</div>}
       <div className="build-grid">
-        {(catalog?.units ?? []).map((u) => {
+        {catalog.units.map((u) => {
           const cost = flatPurchaseCost(u);
           const n = counts.get(u.id) ?? 0;
           return (
             <div className="build-card" key={u.id}>
               <h3>{u.name}</h3>
-              {u.description && <p className="stub" style={{ margin: "0 0 0.5rem" }}>{u.description}</p>}
+              {u.description && (
+                <p className="stub" style={{ margin: "0 0 0.5rem" }}>
+                  {u.description}
+                </p>
+              )}
               <div className="lv">
                 На планете: <strong>{fmt(n)}</strong>
               </div>
@@ -61,6 +69,7 @@ export function ShipyardPage() {
                 Металл {fmt(cost.metal ?? 0)} · Минералы {fmt(cost.minerals ?? 0)} · Веспен{" "}
                 {fmt(cost.vespene ?? 0)}
               </div>
+              <UnitSpecializationInfo unit={u} />
               <button
                 type="button"
                 className="btn"

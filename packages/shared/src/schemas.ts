@@ -118,6 +118,16 @@ export const buildingSchema = z.object({
   requirements: z.array(catalogRequirementSchema).optional(),
 });
 
+export const unitSizeIdSchema = z.enum(["small", "medium", "large", "flagship"]);
+export const unitArmorTypeIdSchema = z.enum(["light", "reinforced", "heavy"]);
+
+/** Модификатор урона по размеру или типу брони цели. */
+export const specializationModifierSchema = z.object({
+  kind: z.enum(["size", "armorType"]),
+  target: z.string(),
+  multiplier: z.number().positive(),
+});
+
 /** Базовые боевые/технические параметры (каталог; бой — позже). */
 export const unitStatsSchema = z.object({
   armor: z.number().nonnegative().optional(),
@@ -126,8 +136,8 @@ export const unitStatsSchema = z.object({
   capacity: z.number().nonnegative().optional(),
   fuel: z.number().nonnegative().optional(),
   attack: z.number().nonnegative().optional(),
-  size: z.string().optional(),
-  armorType: z.string().optional(),
+  size: unitSizeIdSchema.optional(),
+  armorType: unitArmorTypeIdSchema.optional(),
 });
 
 export const fleetUnitSchema = z.object({
@@ -142,6 +152,8 @@ export const fleetUnitSchema = z.object({
   energyPerUnit: z.number().nonnegative().optional(),
   /** Базовые характеристики с референса (без бонусов технологий). */
   stats: unitStatsSchema.optional(),
+  /** Бонусы/штрафы урона по целям (задаётся в админке для этого юнита). */
+  specialization: z.array(specializationModifierSchema).optional(),
 });
 
 export const unitSchema = fleetUnitSchema;
@@ -220,4 +232,5 @@ export type ResearchItemDef = z.infer<typeof researchItemSchema>;
 export type FleetUnitDef = z.infer<typeof fleetUnitSchema>;
 export type CatalogItemDef = z.infer<typeof catalogItemSchema>;
 export type PlanetTypeDef = z.infer<typeof planetTypeSchema>;
+export type SpecializationModifier = z.infer<typeof specializationModifierSchema>;
 export type GameCatalog = z.infer<typeof catalogSchema>;

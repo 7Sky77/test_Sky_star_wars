@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { flatPurchaseCost } from "@sw/shared";
 import { apiFetch } from "../api.js";
+import { UnitSpecializationInfo } from "../components/UnitSpecializationInfo.js";
 import { useGame } from "../gameContext.js";
 
 function fmt(n: number) {
@@ -38,19 +39,28 @@ export function DefensePage() {
     }
   }
 
+  if (!catalog) return null;
+
   return (
     <div>
       <h1 className="page-title">Оборона</h1>
-      <p className="page-lead">Планетарная оборона (MVP: мгновенная постройка после оплаты).</p>
+      <p className="page-lead">
+        Планетарная оборона (MVP: мгновенная постройка). Специализация боевых установок задаётся
+        в админке.
+      </p>
       {msg && <div className="error-msg">{msg}</div>}
       <div className="build-grid">
-        {(catalog?.defense ?? []).map((d) => {
+        {catalog.defense.map((d) => {
           const cost = flatPurchaseCost(d);
           const n = counts.get(d.id) ?? 0;
           return (
             <div className="build-card" key={d.id}>
               <h3>{d.name}</h3>
-              {d.description && <p className="stub" style={{ margin: "0 0 0.5rem" }}>{d.description}</p>}
+              {d.description && (
+                <p className="stub" style={{ margin: "0 0 0.5rem" }}>
+                  {d.description}
+                </p>
+              )}
               <div className="lv">
                 На планете: <strong>{fmt(n)}</strong>
               </div>
@@ -58,6 +68,7 @@ export function DefensePage() {
                 Металл {fmt(cost.metal ?? 0)} · Минералы {fmt(cost.minerals ?? 0)} · Веспен{" "}
                 {fmt(cost.vespene ?? 0)}
               </div>
+              <UnitSpecializationInfo unit={d} />
               <button
                 type="button"
                 className="btn"

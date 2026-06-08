@@ -4,7 +4,7 @@ import type Database from "better-sqlite3";
 import { planetParamsForCoords, planetTypeForCoords } from "@sw/shared";
 import { isAdminUsername } from "./adminAuth.js";
 import { registerAdminRoutes } from "./adminRoutes.js";
-import type { CatalogRef } from "./catalogStore.js";
+import { refreshCatalogIfDev, type CatalogRef } from "./catalogStore.js";
 import { getBearerToken, signUserToken, verifyUserToken } from "./auth.js";
 import {
   advancePlanet,
@@ -54,6 +54,7 @@ export function registerRoutes(
   const defaultFaction = cat().factions[0]?.id ?? "terran";
 
   app.get("/api/catalog", async (_req, rep) => {
+    await refreshCatalogIfDev(catalogRef);
     const c = cat();
     rep.send({
       world: c.world,

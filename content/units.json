@@ -278,7 +278,10 @@
       "attack": 30,
       "size": "small",
       "armorType": "light"
-    }
+    },
+    "specialization": [
+      { "kind": "size", "target": "large", "multiplier": 1.5 }
+    ]
   },
   {
     "id": "viking",
@@ -370,7 +373,12 @@
       "attack": 250,
       "size": "medium",
       "armorType": "reinforced"
-    }
+    },
+    "specialization": [
+      { "kind": "size", "target": "small", "multiplier": 1.4 },
+      { "kind": "armorType", "target": "light", "multiplier": 1.5 },
+      { "kind": "armorType", "target": "heavy", "multiplier": 0.6 }
+    ]
   },
   {
     "id": "battleship",
@@ -402,7 +410,13 @@
       "attack": 600,
       "size": "medium",
       "armorType": "heavy"
-    }
+    },
+    "specialization": [
+      { "kind": "size", "target": "small", "multiplier": 0.7 },
+      { "kind": "size", "target": "medium", "multiplier": 0.8 },
+      { "kind": "size", "target": "large", "multiplier": 1.1 },
+      { "kind": "armorType", "target": "heavy", "multiplier": 1.2 }
+    ]
   },
   {
     "id": "bomber",
@@ -434,7 +448,11 @@
       "attack": 2000,
       "size": "large",
       "armorType": "heavy"
-    }
+    },
+    "specialization": [
+      { "kind": "armorType", "target": "reinforced", "multiplier": 1.4 },
+      { "kind": "armorType", "target": "heavy", "multiplier": 1.6 }
+    ]
   },
   {
     "id": "battlecruiser",

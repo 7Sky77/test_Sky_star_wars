@@ -4,6 +4,7 @@ import type {
   FleetUnitDef,
   PlanetTypeDef,
   ResearchItemDef,
+  SpecializationModifier,
   WorldConfig,
 } from "./schemas.js";
 
@@ -521,4 +522,76 @@ export function energyFromFleetUnits(
     sum += e * n;
   }
   return sum;
+}
+
+export const UNIT_SIZES = ["small", "medium", "large", "flagship"] as const;
+export const UNIT_ARMOR_TYPES = ["light", "reinforced", "heavy"] as const;
+
+export type UnitSizeId = (typeof UNIT_SIZES)[number];
+export type UnitArmorTypeId = (typeof UNIT_ARMOR_TYPES)[number];
+
+export const SIZE_LABELS_RU: Record<UnitSizeId, string> = {
+  small: "малый размер",
+  medium: "средний размер",
+  large: "крупный размер",
+  flagship: "флагман",
+};
+
+export const ARMOR_TYPE_LABELS_RU: Record<UnitArmorTypeId, string> = {
+  light: "лёгкая броня",
+  reinforced: "усиленная броня",
+  heavy: "тяжёлая броня",
+};
+
+/** Ключ цели специализации: `size:medium`, `armorType:heavy`. */
+export function specializationTargetKey(
+  kind: "size" | "armorType",
+  target: string
+): string {
+  return `${kind}:${target}`;
+}
+
+export function parseSpecializationTargetKey(
+  key: string
+): { kind: "size" | "armorType"; target: string } | null {
+  const sep = key.indexOf(":");
+  if (sep < 0) return null;
+  const kind = key.slice(0, sep);
+  const target = key.slice(sep + 1);
+  if (kind !== "size" && kind !== "armorType") return null;
+  if (!target) return null;
+  return { kind, target };
+}
+
+/** Боевой юнит может выбрать специализацию (есть урон). */
+export function unitCanSpecialize(unit: { stats?: { attack?: number } }): boolean {
+  return (unit.stats?.attack ?? 0) > 0;
+}
+
+export function specializationModifierLabel(mod: SpecializationModifier): string {
+  const target =
+    mod.kind === "size"
+      ? (SIZE_LABELS_RU[mod.target as UnitSizeId] ?? mod.target)
+      : (ARMOR_TYPE_LABELS_RU[mod.target as UnitArmorTypeId] ?? mod.target);
+  return `урон по ${target} ×${mod.multiplier}`;
+}
+
+/** Множитель урона атакующего с профилем специализации против цели. */
+export function specializationDamageMultiplier(
+  modifiers: SpecializationModifier[],
+  target: { size?: string; armorType?: string }
+): number {
+  let mult = 1;
+  for (const m of modifiers) {
+    if (m.kind === "size" && m.target === target.size) mult *= m.multiplier;
+    if (m.kind === "armorType" && m.target === target.armorType) mult *= m.multiplier;
+  }
+  return mult;
+}
+
+/** Модификаторы специализации юнита из каталога. */
+export function unitSpecializationModifiers(unit: {
+  specialization?: SpecializationModifier[];
+}): SpecializationModifier[] {
+  return unit.specialization ?? [];
 }

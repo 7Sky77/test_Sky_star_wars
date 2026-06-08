@@ -3,6 +3,7 @@ import type Database from "better-sqlite3";
 import {
   catalogSectionItems,
   patchCatalogItem,
+  refreshCatalogIfDev,
   type CatalogRef,
   type CatalogSection,
 } from "./catalogStore.js";
@@ -65,13 +66,14 @@ export function registerAdminRoutes(
 
   app.get<{ Params: { section: string } }>(
     "/api/admin/catalog/:section",
-    (req, rep) => {
+    async (req, rep) => {
       const userId = requireAdmin(req, rep, jwtSecret, db);
       if (userId == null) return;
       const section = req.params.section;
       if (!isCatalogSection(section)) {
         return rep.code(400).send({ error: "invalid_section" });
       }
+      await refreshCatalogIfDev(catalogRef);
       return rep.send({
         section,
         items: catalogSectionItems(catalogRef.current, section),

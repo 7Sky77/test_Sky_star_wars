@@ -110,6 +110,36 @@ function migrate(db: Database.Database) {
   migratePlanetTypeColumn(db);
   migratePlanetParamsColumns(db);
   migrateAdminColumn(db);
+  collapseUnitSpecializationStacks(db);
+}
+
+/** Свернуть стопки по specialization_id в одну запись на юнит (откат per-build выбора). */
+function collapseUnitSpecializationStacks(db: Database.Database) {
+  collapseStackableIfNeeded(db, "planet_units", "unit_id");
+  collapseStackableIfNeeded(db, "planet_defense", "defense_id");
+}
+
+function collapseStackableIfNeeded(
+  db: Database.Database,
+  table: "planet_units" | "planet_defense",
+  itemCol: "unit_id" | "defense_id"
+) {
+  const cols = db.prepare(`PRAGMA table_info(${table})`).all() as { name: string }[];
+  if (!cols.some((c) => c.name === "specialization_id")) return;
+
+  const tmp = `${table}_spec_collapse`;
+  db.exec(`
+    CREATE TABLE ${tmp} (
+      planet_id INTEGER NOT NULL REFERENCES planets(id) ON DELETE CASCADE,
+      ${itemCol} TEXT NOT NULL,
+      quantity INTEGER NOT NULL DEFAULT 0,
+      PRIMARY KEY (planet_id, ${itemCol})
+    );
+    INSERT INTO ${tmp} (planet_id, ${itemCol}, quantity)
+      SELECT planet_id, ${itemCol}, SUM(quantity) FROM ${table} GROUP BY planet_id, ${itemCol};
+    DROP TABLE ${table};
+    ALTER TABLE ${tmp} RENAME TO ${table};
+  `);
 }
 
 function migrateAdminColumn(db: Database.Database) {

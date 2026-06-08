@@ -35,6 +35,12 @@ const SECTION_META: Record<
   },
 };
 
+/** В dev перечитывает content/*.json с диска (в prod — no-op). */
+export async function refreshCatalogIfDev(ref: CatalogRef): Promise<void> {
+  if (process.env.NODE_ENV === "production") return;
+  ref.current = await loadCatalog();
+}
+
 export function catalogSectionItems(
   catalog: GameCatalog,
   section: CatalogSection

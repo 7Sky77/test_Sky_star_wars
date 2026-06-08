@@ -233,6 +233,52 @@ button {
   margin-bottom: 0.5rem;
 }
 
+.spec-block {
+  margin: 0.5rem 0 0.75rem;
+  padding: 0.55rem 0.65rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.15);
+}
+.spec-label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: 0.75rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.spec-select {
+  font: inherit;
+  font-size: 0.85rem;
+  text-transform: none;
+  letter-spacing: normal;
+  color: inherit;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 0.35rem 0.5rem;
+}
+.spec-modifiers {
+  margin: 0.45rem 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.78rem;
+  color: var(--text);
+}
+.spec-modifiers li {
+  margin: 0.2rem 0;
+}
+.spec-modifiers li::before {
+  content: "· ";
+  color: var(--accent);
+}
+.spec-desc {
+  margin: 0.25rem 0 0.35rem;
+  font-size: 0.78rem;
+}
+
 .build-card-btn {
   display: block;
   width: 100%;
