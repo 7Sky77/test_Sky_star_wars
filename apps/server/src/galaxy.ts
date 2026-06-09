@@ -1,11 +1,19 @@
 import type Database from "better-sqlite3";
 import type { GameCatalog } from "@sw/shared";
-import { planetParamsForCoords, planetTypeForCoords } from "@sw/shared";
+import {
+  formatGalaxyCoords,
+  formatSystemAddress,
+  planetParamsForCoords,
+  planetTypeForCoords,
+} from "@sw/shared";
 
 export interface GalaxySlot {
   position: number;
   kind: "star" | "planet";
+  /** Полные координаты `[A:S:P]`. */
   label: string;
+  /** Адрес системы на карте галактики `[A:S]`. */
+  systemAddress: string;
   ownerUsername?: string;
   planetName?: string;
   planetTypeId?: string;
@@ -62,7 +70,8 @@ export function buildSystemSlots(
     {
       position: w.starSlot,
       kind: "star",
-      label: `${arm}:${system}:${w.starSlot}`,
+      label: formatGalaxyCoords(arm, system, w.starSlot),
+      systemAddress: formatSystemAddress(arm, system),
     },
   ];
 
@@ -72,7 +81,8 @@ export function buildSystemSlots(
       slots.push({
         position: pos,
         kind: "planet",
-        label: `${arm}:${system}:${pos}`,
+        label: formatGalaxyCoords(arm, system, pos),
+        systemAddress: formatSystemAddress(arm, system),
         ownerUsername: hit.username,
         planetName: hit.planet_name,
         planetTypeId: hit.planet_type_id,
@@ -87,7 +97,8 @@ export function buildSystemSlots(
       slots.push({
         position: pos,
         kind: "planet",
-        label: `${arm}:${system}:${pos}`,
+        label: formatGalaxyCoords(arm, system, pos),
+        systemAddress: formatSystemAddress(arm, system),
         planetTypeId: planetTypeForCoords(arm, system, pos, typeIds, w.maxPlanetSlot),
         diameterKm: params.diameterKm,
         temperatureMin: params.temperatureMin,

@@ -7,9 +7,11 @@ import { DevGrantPanel } from "./DevGrantPanel.js";
 import { GalaxyPage } from "./GalaxyPage.js";
 import { OverviewPage } from "./OverviewPage.js";
 import { ResourcesPage } from "./ResourcesPage.js";
+import { FleetsPage } from "./FleetsPage.js";
 import { ShipyardPage } from "./ShipyardPage.js";
 import { ResearchPage } from "./ResearchPage.js";
 import { AdminPage } from "./AdminPage.js";
+import { CoordsDisplay } from "../components/CoordsDisplay.js";
 import { StubPage } from "./StubPage.js";
 
 function fmt(n: number) {
@@ -39,7 +41,8 @@ function ShellInner() {
         {p && (
           <>
             <span className="coords">
-              {p.name} [{p.arm}:{p.system}:{p.position}]
+              {p.name}{" "}
+              <CoordsDisplay arm={p.arm} system={p.system} position={p.position} />
             </span>
             <div className="res">
               <span style={{ color: "#9ca3af" }}>Металл {fmt(p.resources.metal)}</span>
@@ -78,7 +81,7 @@ function ShellInner() {
           Исследования
         </NavLink>
         <NavLink to="/fleets" className={({ isActive }) => (isActive ? "active" : "")}>
-          Флоты
+          Флот
         </NavLink>
         <NavLink to="/trade" className={({ isActive }) => (isActive ? "active" : "")}>
           Торговля
@@ -101,7 +104,7 @@ function ShellInner() {
           <Route path="/shipyard" element={<ShipyardPage />} />
           <Route path="/defense" element={<DefensePage />} />
           <Route path="/research" element={<ResearchPage />} />
-          <Route path="/fleets" element={<StubPage title="Флоты" />} />
+          <Route path="/fleets" element={<FleetsPage />} />
           <Route path="/trade" element={<StubPage title="Торговля" />} />
           <Route path="/galaxy" element={<GalaxyPage />} />
           <Route path="/admin" element={<AdminPage />} />

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import { formatGalaxyCoords, formatSystemAddress } from "@sw/shared";
 import { apiFetch, setToken } from "../api.js";
 import { useGame } from "../gameContext.js";
 import { formatDiameterKm, formatTemperatureRange } from "../planetFormat.js";
@@ -203,7 +204,7 @@ export function GalaxyPage() {
                       onClick={() => openSystem(sys.arm, sys.system)}
                       title="Открыть систему"
                     >
-                      {sys.arm}:{sys.system}
+                      {formatSystemAddress(sys.arm, sys.system)}
                     </button>
                     {sys.slots
                       .filter((s) => s.kind === "planet")
@@ -242,7 +243,7 @@ export function GalaxyPage() {
                     const star = systemData.slots.find((s) => s.kind === "star");
                     if (star) selectSlot(systemData.arm, systemData.system, star);
                   }}
-                  title={`${systemData.arm}:${systemData.system}:0`}
+                  title={formatGalaxyCoords(systemData.arm, systemData.system, 0)}
                 >
                   ☀
                 </button>
@@ -280,8 +281,8 @@ export function GalaxyPage() {
                 <div className="orbit-ring orbit-ring-3" />
               </div>
               <p className="galaxy-system-caption">
-                Система {systemData.arm}:{systemData.system} — клик по планете для
-                сведений
+                Система {formatSystemAddress(systemData.arm, systemData.system)} —
+                клик по планете для координат на карте галактики
               </p>
             </div>
           )}
@@ -289,7 +290,8 @@ export function GalaxyPage() {
 
         <aside className="galaxy-side">
           <div className="galaxy-side-section">
-            <strong>Навигация</strong>
+            <strong>Адрес системы</strong>
+            <p className="stub-inline">Рукав и система — для навигации по галактике.</p>
           </div>
           <div className="row">
             <label htmlFor="ga">Рукав</label>
@@ -360,11 +362,14 @@ export function GalaxyPage() {
           <div className="galaxy-detail-head">
             <strong>
               {selected.slot.kind === "star"
-                ? `Звезда ${selected.arm}:${selected.system}:0`
+                ? `Звезда ${selected.slot.label}`
                 : selected.slot.planetName
-                  ? `${selected.slot.planetName} [${selected.slot.label}]`
+                  ? `${selected.slot.planetName} ${selected.slot.label}`
                   : selected.slot.label}
             </strong>
+            <span className="coords-inline stub-inline">
+              {selected.slot.systemAddress ?? formatSystemAddress(selected.arm, selected.system)}
+            </span>
             <button
               type="button"
               className="btn btn-ghost"

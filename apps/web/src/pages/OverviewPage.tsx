@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom";
 import { useGame } from "../gameContext.js";
 import { formatDiameterKm, formatTemperatureRange } from "../planetFormat.js";
+import { CoordsDisplay } from "../components/CoordsDisplay.js";
+import { LocalSpaceInfo } from "../components/LocalSpaceInfo.js";
 import { planetTypeClass } from "../planetVisuals.js";
 
 function fmt(n: number) {
@@ -25,10 +27,8 @@ export function OverviewPage() {
       {p && (
         <>
           <p className="page-lead">
-            Колония <strong>{p.name}</strong> в секторе{" "}
-            <span className="coords-inline">
-              [{p.arm}:{p.system}:{p.position}]
-            </span>
+            Колония <strong>{p.name}</strong> · галактика{" "}
+            <CoordsDisplay arm={p.arm} system={p.system} position={p.position} className="coords-inline" />
             {planetType && (
               <>
                 {" "}
@@ -109,6 +109,8 @@ export function OverviewPage() {
               </ul>
             </div>
           </div>
+
+          {catalog?.localSpace && <LocalSpaceInfo localSpace={catalog.localSpace} />}
         </>
       )}
     </div>

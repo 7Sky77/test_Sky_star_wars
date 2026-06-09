@@ -510,6 +510,35 @@ export function flatPurchaseCost(item: { costs: BuildingDef["costs"] }): Record<
   return out;
 }
 
+/** Стоимость N единиц (линейно по ресурсам). */
+export function scalePurchaseCost(
+  unitCost: Record<string, number>,
+  quantity: number
+): Record<string, number> {
+  const q = Math.max(0, Math.floor(quantity));
+  const out: Record<string, number> = {};
+  for (const [id, amount] of Object.entries(unitCost)) {
+    out[id] = amount * q;
+  }
+  return out;
+}
+
+/** Сколько единиц можно купить при текущих запасах. */
+export function maxAffordableQuantity(
+  unitCost: Record<string, number>,
+  resources: { metal?: number; minerals?: number; vespene?: number }
+): number {
+  const limits: number[] = [];
+  const metal = unitCost.metal ?? 0;
+  const minerals = unitCost.minerals ?? 0;
+  const vespene = unitCost.vespene ?? 0;
+  if (metal > 0) limits.push(Math.floor((resources.metal ?? 0) / metal));
+  if (minerals > 0) limits.push(Math.floor((resources.minerals ?? 0) / minerals));
+  if (vespene > 0) limits.push(Math.floor((resources.vespene ?? 0) / vespene));
+  if (limits.length === 0) return 0;
+  return Math.max(0, Math.min(...limits));
+}
+
 /** Энергия от орбитальных юнитов (например солнечные спутники). */
 export function energyFromFleetUnits(
   units: FleetUnitDef[],

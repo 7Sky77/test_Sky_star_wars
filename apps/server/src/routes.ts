@@ -65,6 +65,7 @@ export function registerRoutes(
       research: c.research,
       defense: c.defense,
       planetTypes: c.planetTypes,
+      localSpace: c.localSpace,
       cheats: cheatsEnabled ? { grantResources: true } : undefined,
     });
   });
@@ -382,11 +383,12 @@ export function registerRoutes(
     return rep.send({ ok: true });
   });
 
-  app.post<{ Body: { unitId?: string } }>("/api/game/ships/build", (req, rep) => {
+  app.post<{ Body: { unitId?: string; quantity?: number } }>("/api/game/ships/build", (req, rep) => {
     const userId = requireUser(req, rep, jwtSecret);
     if (userId == null) return;
     const unitId = req.body?.unitId?.trim();
     if (!unitId) return rep.code(400).send({ error: "missing_unitId" });
+    const quantity = Math.floor(Number(req.body?.quantity ?? 1));
 
     const planet = db
       .prepare(`SELECT id FROM planets WHERE user_id = ? LIMIT 1`)
@@ -394,43 +396,47 @@ export function registerRoutes(
     if (!planet) return rep.code(404).send({ error: "no_planet" });
 
     const now = Date.now();
-    const r = purchaseFleetUnit(db, cat(), planet.id, unitId, now);
+    const r = purchaseFleetUnit(db, cat(), planet.id, unitId, quantity, now);
     if (!r.ok) return rep.code(400).send({ error: r.error });
 
     logGameEvent(db, {
       kind: "fleet.purchase",
       userId,
       planetId: planet.id,
-      message: `Покупка корабля: ${unitId}`,
-      details: { unitId },
+      message: `Покупка корабля: ${unitId} ×${quantity}`,
+      details: { unitId, quantity },
     });
-    return rep.send({ ok: true });
+    return rep.send({ ok: true, quantity });
   });
 
-  app.post<{ Body: { defenseId?: string } }>("/api/game/defense/build", (req, rep) => {
-    const userId = requireUser(req, rep, jwtSecret);
-    if (userId == null) return;
-    const defenseId = req.body?.defenseId?.trim();
-    if (!defenseId) return rep.code(400).send({ error: "missing_defenseId" });
+  app.post<{ Body: { defenseId?: string; quantity?: number } }>(
+    "/api/game/defense/build",
+    (req, rep) => {
+      const userId = requireUser(req, rep, jwtSecret);
+      if (userId == null) return;
+      const defenseId = req.body?.defenseId?.trim();
+      if (!defenseId) return rep.code(400).send({ error: "missing_defenseId" });
+      const quantity = Math.floor(Number(req.body?.quantity ?? 1));
 
-    const planet = db
-      .prepare(`SELECT id FROM planets WHERE user_id = ? LIMIT 1`)
-      .get(userId) as { id: number } | undefined;
-    if (!planet) return rep.code(404).send({ error: "no_planet" });
+      const planet = db
+        .prepare(`SELECT id FROM planets WHERE user_id = ? LIMIT 1`)
+        .get(userId) as { id: number } | undefined;
+      if (!planet) return rep.code(404).send({ error: "no_planet" });
 
-    const now = Date.now();
-    const r = purchaseDefenseUnit(db, cat(), planet.id, defenseId, now);
-    if (!r.ok) return rep.code(400).send({ error: r.error });
+      const now = Date.now();
+      const r = purchaseDefenseUnit(db, cat(), planet.id, defenseId, quantity, now);
+      if (!r.ok) return rep.code(400).send({ error: r.error });
 
-    logGameEvent(db, {
-      kind: "defense.purchase",
-      userId,
-      planetId: planet.id,
-      message: `Покупка обороны: ${defenseId}`,
-      details: { defenseId },
-    });
-    return rep.send({ ok: true });
-  });
+      logGameEvent(db, {
+        kind: "defense.purchase",
+        userId,
+        planetId: planet.id,
+        message: `Покупка обороны: ${defenseId} ×${quantity}`,
+        details: { defenseId, quantity },
+      });
+      return rep.send({ ok: true, quantity });
+    }
+  );
 
   function parseGalaxyCoord(
     raw: string | undefined,

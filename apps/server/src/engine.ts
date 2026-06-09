@@ -253,30 +253,40 @@ function purchaseStackable(
   planetId: number,
   table: "planet_units" | "planet_defense",
   itemId: string,
-  cost: Record<string, number>,
+  unitCost: Record<string, number>,
+  quantity: number,
   now: number
 ): void {
+  const q = Math.floor(quantity);
+  if (q < 1) throw new Error("invalid_quantity");
+
   advancePlanet(db, catalog, planetId, now);
   const row = db
     .prepare(`SELECT metal, minerals, vespene FROM planets WHERE id = ?`)
     .get(planetId) as { metal: number; minerals: number; vespene: number };
-  if (row.metal < (cost.metal ?? 0)) throw new Error("not_enough_metal");
-  if (row.minerals < (cost.minerals ?? 0)) throw new Error("not_enough_minerals");
-  if (row.vespene < (cost.vespene ?? 0))
-    throw new Error("not_enough_vespene");
+
+  const totalMetal = (unitCost.metal ?? 0) * q;
+  const totalMinerals = (unitCost.minerals ?? 0) * q;
+  const totalVespene = (unitCost.vespene ?? 0) * q;
+
+  if (row.metal < totalMetal) throw new Error("not_enough_metal");
+  if (row.minerals < totalMinerals) throw new Error("not_enough_minerals");
+  if (row.vespene < totalVespene) throw new Error("not_enough_vespene");
+
   db.prepare(
     `UPDATE planets SET metal = metal - ?, minerals = minerals - ?, vespene = vespene - ? WHERE id = ?`
-  ).run(cost.metal ?? 0, cost.minerals ?? 0, cost.vespene ?? 0, planetId);
+  ).run(totalMetal, totalMinerals, totalVespene, planetId);
+
   if (table === "planet_units") {
     db.prepare(
-      `INSERT INTO planet_units (planet_id, unit_id, quantity) VALUES (?, ?, 1)
-       ON CONFLICT(planet_id, unit_id) DO UPDATE SET quantity = planet_units.quantity + 1`
-    ).run(planetId, itemId);
+      `INSERT INTO planet_units (planet_id, unit_id, quantity) VALUES (?, ?, ?)
+       ON CONFLICT(planet_id, unit_id) DO UPDATE SET quantity = planet_units.quantity + excluded.quantity`
+    ).run(planetId, itemId, q);
   } else {
     db.prepare(
-      `INSERT INTO planet_defense (planet_id, defense_id, quantity) VALUES (?, ?, 1)
-       ON CONFLICT(planet_id, defense_id) DO UPDATE SET quantity = planet_defense.quantity + 1`
-    ).run(planetId, itemId);
+      `INSERT INTO planet_defense (planet_id, defense_id, quantity) VALUES (?, ?, ?)
+       ON CONFLICT(planet_id, defense_id) DO UPDATE SET quantity = planet_defense.quantity + excluded.quantity`
+    ).run(planetId, itemId, q);
   }
 }
 
@@ -285,13 +295,16 @@ export function purchaseFleetUnit(
   catalog: GameCatalog,
   planetId: number,
   unitId: string,
+  quantity = 1,
   now = Date.now()
 ): { ok: true } | { ok: false; error: string } {
   const def = fleetUnitMap(catalog).get(unitId);
   if (!def) return { ok: false, error: "unknown_unit" };
+  const q = Math.floor(quantity);
+  if (q < 1 || q > 100_000) return { ok: false, error: "invalid_quantity" };
   const cost = flatPurchaseCost(def);
   const tx = db.transaction(() => {
-    purchaseStackable(db, catalog, planetId, "planet_units", unitId, cost, now);
+    purchaseStackable(db, catalog, planetId, "planet_units", unitId, cost, q, now);
   });
   try {
     tx();
@@ -310,13 +323,16 @@ export function purchaseDefenseUnit(
   catalog: GameCatalog,
   planetId: number,
   defenseId: string,
+  quantity = 1,
   now = Date.now()
 ): { ok: true } | { ok: false; error: string } {
   const def = defenseUnitMap(catalog).get(defenseId);
   if (!def) return { ok: false, error: "unknown_defense" };
+  const q = Math.floor(quantity);
+  if (q < 1 || q > 100_000) return { ok: false, error: "invalid_quantity" };
   const cost = flatPurchaseCost(def);
   const tx = db.transaction(() => {
-    purchaseStackable(db, catalog, planetId, "planet_defense", defenseId, cost, now);
+    purchaseStackable(db, catalog, planetId, "planet_defense", defenseId, cost, q, now);
   });
   try {
     tx();

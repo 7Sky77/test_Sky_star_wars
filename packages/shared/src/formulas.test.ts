@@ -6,6 +6,8 @@ import {
   energyConsumption,
   energyFromFleetUnits,
   flatPurchaseCost,
+  maxAffordableQuantity,
+  scalePurchaseCost,
   planetParamsForCoords,
   planetTypeForCoords,
   productionPerHour,
@@ -131,6 +133,17 @@ describe("formulas", () => {
       energyPerUnit: 50,
     };
     expect(flatPurchaseCost(sat)).toEqual({ minerals: 2000, vespene: 500 });
+    expect(scalePurchaseCost({ metal: 100, minerals: 50 }, 3)).toEqual({
+      metal: 300,
+      minerals: 150,
+    });
+    expect(
+      maxAffordableQuantity({ metal: 1000, minerals: 500, vespene: 100 }, {
+        metal: 4500,
+        minerals: 1200,
+        vespene: 250,
+      })
+    ).toBe(2);
     const m = new Map<string, number>([["solar_satellite", 2]]);
     expect(energyFromFleetUnits([sat], m)).toBe(100);
   });

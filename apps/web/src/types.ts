@@ -48,6 +48,7 @@ export interface GalaxySlot {
   position: number;
   kind: "star" | "planet";
   label: string;
+  systemAddress: string;
   ownerUsername?: string;
   planetName?: string;
   planetTypeId?: string;

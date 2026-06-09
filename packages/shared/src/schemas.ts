@@ -200,6 +200,32 @@ export const planetTypeSchema = z.object({
   bonuses: planetTypeBonusesSchema.optional(),
 });
 
+/** Локальное пространство вокруг объекта (орбиты, центр 0:0:0). */
+export const localSpaceSchema = z.object({
+  description: z.string(),
+  center: z.object({ x: z.number(), y: z.number(), z: z.number() }),
+  orbits: z.array(
+    z.object({
+      id: z.enum(["low", "medium", "high"]),
+      name: z.string(),
+      description: z.string(),
+    })
+  ),
+  centerKinds: z.array(
+    z.object({
+      id: z.enum(["planet", "asteroid", "temple", "pirate_station", "star"]),
+      name: z.string(),
+    })
+  ),
+  intruderKinds: z.array(
+    z.object({
+      id: z.enum(["pirate_bot", "player"]),
+      name: z.string(),
+      description: z.string(),
+    })
+  ),
+});
+
 /** Справочные записи каталога (спутники, офицеры, предметы, способности). */
 export const catalogItemSchema = z.object({
   id: z.string(),
@@ -221,6 +247,7 @@ export const catalogSchema = z.object({
   abilities: z.array(catalogItemSchema).default([]),
   items: z.array(catalogItemSchema).default([]),
   planetTypes: z.array(planetTypeSchema).default([]),
+  localSpace: localSpaceSchema,
 });
 
 export type WorldConfig = z.infer<typeof worldSchema>;
@@ -232,5 +259,6 @@ export type ResearchItemDef = z.infer<typeof researchItemSchema>;
 export type FleetUnitDef = z.infer<typeof fleetUnitSchema>;
 export type CatalogItemDef = z.infer<typeof catalogItemSchema>;
 export type PlanetTypeDef = z.infer<typeof planetTypeSchema>;
+export type LocalSpaceDef = z.infer<typeof localSpaceSchema>;
 export type SpecializationModifier = z.infer<typeof specializationModifierSchema>;
 export type GameCatalog = z.infer<typeof catalogSchema>;

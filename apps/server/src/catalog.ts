@@ -30,6 +30,7 @@ export async function loadCatalog(): Promise<GameCatalog> {
     items,
     abilities,
     planetTypes,
+    localSpace,
   ] = await Promise.all([
     readJsonFile(dir, "world.json"),
     readJsonFile(dir, "resources.json"),
@@ -43,6 +44,7 @@ export async function loadCatalog(): Promise<GameCatalog> {
     readJsonFile(dir, "items.json"),
     readJsonFile(dir, "abilities.json"),
     readJsonFile(dir, "planet_types.json"),
+    readJsonFile(dir, "local_space.json"),
   ]);
   const raw = {
     world,
@@ -57,6 +59,7 @@ export async function loadCatalog(): Promise<GameCatalog> {
     items,
     abilities,
     planetTypes,
+    localSpace,
   };
   return catalogSchema.parse(raw);
 }
@@ -84,3 +87,4 @@ export function researchMap(
 ): Map<string, (typeof catalog.research)[0]> {
   return new Map(catalog.research.map((r) => [r.id, r]));
 }
+
