@@ -10,6 +10,7 @@ import {
   productionPerHour,
   storageBonusAllAmount,
 } from "@sw/shared";
+import { UniresInfo } from "../components/UniresInfo.js";
 import { useGame } from "../gameContext.js";
 import { formatDiameterKm, formatTemperatureRange } from "../planetFormat.js";
 
@@ -279,6 +280,10 @@ export function ResourcesPage() {
           </tbody>
         </table>
       </section>
+
+      {catalog.unires && (
+        <UniresInfo unires={catalog.unires} planetResources={res} />
+      )}
     </div>
   );
 }

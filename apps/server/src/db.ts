@@ -111,6 +111,77 @@ function migrate(db: Database.Database) {
   migratePlanetParamsColumns(db);
   migrateAdminColumn(db);
   collapseUnitSpecializationStacks(db);
+  migrateFleetMissions(db);
+  migrateOrbitIntruders(db);
+  migrateBattleReports(db);
+}
+
+function migrateBattleReports(db: Database.Database) {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS battle_reports (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      mission_id INTEGER REFERENCES fleet_missions(id) ON DELETE SET NULL,
+      intruder_id TEXT,
+      location_arm INTEGER NOT NULL,
+      location_system INTEGER NOT NULL,
+      location_position INTEGER NOT NULL,
+      location_orbit TEXT NOT NULL,
+      defender_name TEXT NOT NULL,
+      winner TEXT NOT NULL,
+      attacker_start_json TEXT NOT NULL,
+      defender_start_json TEXT NOT NULL,
+      attacker_survivors_json TEXT NOT NULL,
+      defender_survivors_json TEXT NOT NULL,
+      rounds_json TEXT NOT NULL,
+      created_at INTEGER NOT NULL
+    );
+    CREATE INDEX IF NOT EXISTS idx_battle_reports_user ON battle_reports(user_id, created_at DESC);
+  `);
+}
+
+function migrateOrbitIntruders(db: Database.Database) {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS orbit_intruders (
+      id TEXT PRIMARY KEY,
+      name TEXT NOT NULL,
+      intruder_kind TEXT NOT NULL DEFAULT 'pirate_bot',
+      arm INTEGER NOT NULL,
+      system INTEGER NOT NULL,
+      position INTEGER NOT NULL,
+      orbit TEXT NOT NULL,
+      units_json TEXT NOT NULL
+    );
+    CREATE UNIQUE INDEX IF NOT EXISTS idx_orbit_intruders_coords
+      ON orbit_intruders(arm, system, position, orbit);
+  `);
+}
+
+function migrateFleetMissions(db: Database.Database) {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS fleet_missions (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      origin_planet_id INTEGER NOT NULL REFERENCES planets(id) ON DELETE CASCADE,
+      origin_arm INTEGER NOT NULL,
+      origin_system INTEGER NOT NULL,
+      origin_position INTEGER NOT NULL,
+      target_arm INTEGER NOT NULL,
+      target_system INTEGER NOT NULL,
+      target_position INTEGER NOT NULL,
+      target_orbit TEXT NOT NULL,
+      mission_type TEXT NOT NULL DEFAULT 'hold',
+      status TEXT NOT NULL DEFAULT 'outbound',
+      units_json TEXT NOT NULL,
+      speed_pct INTEGER NOT NULL DEFAULT 100,
+      hold_seconds INTEGER NOT NULL DEFAULT 0,
+      launched_at INTEGER NOT NULL,
+      arrives_at INTEGER NOT NULL,
+      hold_until INTEGER
+    );
+    CREATE INDEX IF NOT EXISTS idx_fleet_missions_user ON fleet_missions(user_id);
+    CREATE INDEX IF NOT EXISTS idx_fleet_missions_status ON fleet_missions(status, arrives_at);
+  `);
 }
 
 /** Свернуть стопки по specialization_id в одну запись на юнит (откат per-build выбора). */

@@ -17,6 +17,23 @@ import {
   queueResearch,
 } from "./engine.js";
 import { buildGalaxySector, buildSystemSlots } from "./galaxy.js";
+import {
+  advanceFleetMissions,
+  listFleetMissions,
+  recallFleetMission,
+  sendFleetMission,
+  serializeFleetMission,
+} from "./fleet.js";
+import {
+  attackIntruderFromMission,
+  listBattleReports,
+  serializeBattleReport,
+} from "./combat.js";
+import {
+  ensureSystemPirate,
+  listOrbitIntruders,
+  serializeOrbitIntruder,
+} from "./intruders.js";
 import { logGameEvent } from "./gameLog.js";
 
 function requireUser(
@@ -66,6 +83,8 @@ export function registerRoutes(
       defense: c.defense,
       planetTypes: c.planetTypes,
       localSpace: c.localSpace,
+      unires: c.unires,
+      orbitIntruders: listOrbitIntruders(db).map((i) => serializeOrbitIntruder(i, c)),
       cheats: cheatsEnabled ? { grantResources: true } : undefined,
     });
   });
@@ -134,6 +153,7 @@ export function registerRoutes(
           );
           insB.run(planetId, "metal_mine", 1);
           insB.run(planetId, "solar_plant", 1);
+          ensureSystemPirate(db, coords.arm, coords.system, coords.position);
         });
         tx();
       } catch (e: unknown) {
@@ -243,6 +263,7 @@ export function registerRoutes(
     const now = Date.now();
     advancePlanet(db, cat(), planet.id, now);
     advanceResearch(db, userId, now);
+    advanceFleetMissions(db, cat(), now);
 
     const p2 = db
       .prepare(
@@ -327,6 +348,13 @@ export function registerRoutes(
       buildQueue: queue,
       units,
       defense: defenseRows,
+      fleetMissions: listFleetMissions(db, userId).map(serializeFleetMission),
+      orbitIntruders: listOrbitIntruders(db).map((i) =>
+        serializeOrbitIntruder(i, cat())
+      ),
+      battleReports: listBattleReports(db, userId).map((r) =>
+        serializeBattleReport(r, cat())
+      ),
     });
   });
 
@@ -381,6 +409,108 @@ export function registerRoutes(
       details: { researchId },
     });
     return rep.send({ ok: true });
+  });
+
+  app.post<{
+    Body: {
+      targetArm?: number;
+      targetSystem?: number;
+      targetPosition?: number;
+      targetOrbit?: string;
+      missionType?: string;
+      units?: Record<string, number>;
+      speedPct?: number;
+      holdMinutes?: number;
+    };
+  }>("/api/game/fleet/send", (req, rep) => {
+    const userId = requireUser(req, rep, jwtSecret);
+    if (userId == null) return;
+
+    const targetArm = Math.floor(Number(req.body?.targetArm));
+    const targetSystem = Math.floor(Number(req.body?.targetSystem));
+    const targetPosition = Math.floor(Number(req.body?.targetPosition));
+    const targetOrbit = req.body?.targetOrbit?.trim() as
+      | "low"
+      | "medium"
+      | "high"
+      | undefined;
+    if (!targetOrbit) return rep.code(400).send({ error: "missing_targetOrbit" });
+
+    const planet = db
+      .prepare(`SELECT id FROM planets WHERE user_id = ? LIMIT 1`)
+      .get(userId) as { id: number } | undefined;
+    if (!planet) return rep.code(404).send({ error: "no_planet" });
+
+    const now = Date.now();
+    const r = sendFleetMission(db, cat(), userId, planet.id, {
+      targetArm,
+      targetSystem,
+      targetPosition,
+      targetOrbit,
+      missionType: req.body?.missionType === "attack" ? "attack" : "hold",
+      units: req.body?.units ?? {},
+      speedPct: Math.floor(Number(req.body?.speedPct ?? 100)),
+      holdMinutes: Math.floor(Number(req.body?.holdMinutes ?? 0)),
+    }, now);
+    if (!r.ok) return rep.code(400).send({ error: r.error });
+
+    logGameEvent(db, {
+      kind: "fleet.send",
+      userId,
+      planetId: planet.id,
+      message: `Отправка флота на [${targetArm}:${targetSystem}:${targetPosition}] (${targetOrbit})`,
+      details: {
+        missionId: r.missionId,
+        targetArm,
+        targetSystem,
+        targetPosition,
+        targetOrbit,
+        units: req.body?.units,
+      },
+    });
+    return rep.send({ ok: true, missionId: r.missionId, arrivesAt: r.arrivesAt });
+  });
+
+  app.post<{ Body: { missionId?: number } }>("/api/game/fleet/attack", (req, rep) => {
+    const userId = requireUser(req, rep, jwtSecret);
+    if (userId == null) return;
+
+    const missionId = Math.floor(Number(req.body?.missionId));
+    if (!missionId) return rep.code(400).send({ error: "missing_missionId" });
+
+    const now = Date.now();
+    advanceFleetMissions(db, cat(), now);
+    const r = attackIntruderFromMission(db, cat(), userId, missionId, now);
+    if (!r.ok) return rep.code(400).send({ error: r.error });
+
+    logGameEvent(db, {
+      kind: "battle.attack",
+      userId,
+      message: `Бой с противником (миссия #${missionId}), исход: ${r.winner}`,
+      details: { missionId, reportId: r.reportId, winner: r.winner },
+    });
+    return rep.send({ ok: true, reportId: r.reportId, winner: r.winner });
+  });
+
+  app.post<{ Body: { missionId?: number } }>("/api/game/fleet/recall", (req, rep) => {
+    const userId = requireUser(req, rep, jwtSecret);
+    if (userId == null) return;
+
+    const missionId = Math.floor(Number(req.body?.missionId));
+    if (!missionId) return rep.code(400).send({ error: "missing_missionId" });
+
+    const now = Date.now();
+    advanceFleetMissions(db, cat(), now);
+    const r = recallFleetMission(db, userId, missionId, now);
+    if (!r.ok) return rep.code(400).send({ error: r.error });
+
+    logGameEvent(db, {
+      kind: "fleet.recall",
+      userId,
+      message: `Возврат флота с координат (миссия #${missionId})`,
+      details: { missionId, arrivesAt: r.arrivesAt },
+    });
+    return rep.send({ ok: true, arrivesAt: r.arrivesAt });
   });
 
   app.post<{ Body: { unitId?: string; quantity?: number } }>("/api/game/ships/build", (req, rep) => {

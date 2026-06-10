@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { formatGalaxyCoords, formatSystemAddress } from "@sw/shared";
+import { formatGalaxyCoords, formatSystemAddress, orbitLabel } from "@sw/shared";
 import { apiFetch, setToken } from "../api.js";
 import { useGame } from "../gameContext.js";
 import { formatDiameterKm, formatTemperatureRange } from "../planetFormat.js";
@@ -401,6 +401,19 @@ export function GalaxyPage() {
                 </strong>
               </p>
             )}
+          {selected.slot.orbitIntruders && selected.slot.orbitIntruders.length > 0 && (
+            <div className="galaxy-orbit-intruders">
+              <strong>Флоты на орбитах</strong>
+              <ul>
+                {selected.slot.orbitIntruders.map((i) => (
+                  <li key={i.id}>
+                    <strong>{i.name}</strong> ({orbitLabel(i.orbit)}) — {i.totalShips} корабл.
+                    {i.units.fighter ? ` · истребитель ×${i.units.fighter}` : ""}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
           {selected.slot.kind === "star" ? null : selected.slot.ownerUsername ? (
             <>
               <p>

@@ -42,6 +42,75 @@ export interface GameState {
   }[];
   units: { unit_id: string; quantity: number }[];
   defense: { defense_id: string; quantity: number }[];
+  fleetMissions: FleetMissionState[];
+  orbitIntruders: OrbitIntruderState[];
+  battleReports: BattleReportState[];
+}
+
+export interface BattleReportState {
+  id: number;
+  missionId: number | null;
+  intruderId: string | null;
+  location: {
+    arm: number;
+    system: number;
+    position: number;
+    orbit: "low" | "medium" | "high";
+  };
+  defenderName: string;
+  winner: "attacker" | "defender" | "draw";
+  attackerStart: { unitId: string; name: string; quantity: number }[];
+  defenderStart: { unitId: string; name: string; quantity: number }[];
+  attackerSurvivors: { unitId: string; name: string; quantity: number }[];
+  defenderSurvivors: { unitId: string; name: string; quantity: number }[];
+  rounds: {
+    round: number;
+    attackerShips: number;
+    defenderShips: number;
+    attackerDamage: number;
+    defenderDamage: number;
+    attackerDestroyed: number;
+    defenderDestroyed: number;
+  }[];
+  createdAt: number;
+}
+
+export interface OrbitIntruderState {
+  id: string;
+  name: string;
+  intruderKind: "pirate_bot" | "player";
+  arm: number;
+  system: number;
+  position: number;
+  orbit: "low" | "medium" | "high";
+  units: Record<string, number>;
+  unitDetails: { unitId: string; name: string; quantity: number }[];
+  totalShips: number;
+}
+
+export interface FleetMissionState {
+  id: number;
+  origin: {
+    arm: number;
+    system: number;
+    position: number;
+    planetId: number;
+  };
+  target: {
+    arm: number;
+    system: number;
+    position: number;
+    orbit: "low" | "medium" | "high";
+  };
+  missionType: "hold" | "attack";
+  status: "outbound" | "holding" | "returning";
+  units: Record<string, number>;
+  totalShips: number;
+  speedPct: number;
+  holdSeconds: number;
+  launchedAt: number;
+  arrivesAt: number;
+  holdUntil: number | null;
 }
 
 export interface GalaxySlot {
@@ -57,6 +126,14 @@ export interface GalaxySlot {
   temperatureMax?: number;
   isYours?: boolean;
   isEmpty?: boolean;
+  orbitIntruders?: {
+    id: string;
+    name: string;
+    intruderKind: string;
+    orbit: "low" | "medium" | "high";
+    totalShips: number;
+    units: Record<string, number>;
+  }[];
 }
 
 export interface GalaxySystemResponse {

@@ -1,0 +1,14 @@
+[
+  {
+    "id": "pirate_high_1",
+    "name": "Пират",
+    "intruderKind": "pirate_bot",
+    "arm": 7,
+    "system": 12,
+    "position": 8,
+    "orbit": "high",
+    "units": {
+      "fighter": 5
+    }
+  }
+]

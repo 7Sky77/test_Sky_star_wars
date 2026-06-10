@@ -200,6 +200,19 @@ export const planetTypeSchema = z.object({
   bonuses: planetTypeBonusesSchema.optional(),
 });
 
+/** Унирес — универсальная мера стоимости. */
+export const uniresSchema = z.object({
+  name: z.string(),
+  shortName: z.string().default("ун."),
+  description: z.string(),
+  /** За 1000 униреса — сколько металла / минералов (кристалла) / веспена. */
+  perThousand: z.object({
+    metal: z.number().positive(),
+    minerals: z.number().positive(),
+    vespene: z.number().positive(),
+  }),
+});
+
 /** Локальное пространство вокруг объекта (орбиты, центр 0:0:0). */
 export const localSpaceSchema = z.object({
   description: z.string(),
@@ -234,6 +247,17 @@ export const catalogItemSchema = z.object({
   allowedFactions: allowedFactionsField,
 });
 
+export const orbitIntruderSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  intruderKind: z.enum(["pirate_bot", "player"]),
+  arm: z.number().int().positive(),
+  system: z.number().int().positive(),
+  position: z.number().int().nonnegative(),
+  orbit: z.enum(["low", "medium", "high"]),
+  units: z.record(z.string(), z.number().int().positive()),
+});
+
 export const catalogSchema = z.object({
   world: worldSchema,
   resources: z.array(resourceTypeSchema),
@@ -248,6 +272,8 @@ export const catalogSchema = z.object({
   items: z.array(catalogItemSchema).default([]),
   planetTypes: z.array(planetTypeSchema).default([]),
   localSpace: localSpaceSchema,
+  unires: uniresSchema,
+  orbitIntruders: z.array(orbitIntruderSchema).default([]),
 });
 
 export type WorldConfig = z.infer<typeof worldSchema>;
@@ -260,5 +286,7 @@ export type FleetUnitDef = z.infer<typeof fleetUnitSchema>;
 export type CatalogItemDef = z.infer<typeof catalogItemSchema>;
 export type PlanetTypeDef = z.infer<typeof planetTypeSchema>;
 export type LocalSpaceDef = z.infer<typeof localSpaceSchema>;
+export type UniresDef = z.infer<typeof uniresSchema>;
+export type OrbitIntruderDef = z.infer<typeof orbitIntruderSchema>;
 export type SpecializationModifier = z.infer<typeof specializationModifierSchema>;
 export type GameCatalog = z.infer<typeof catalogSchema>;

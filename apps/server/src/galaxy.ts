@@ -1,11 +1,13 @@
 import type Database from "better-sqlite3";
-import type { GameCatalog } from "@sw/shared";
+import type { GameCatalog, LocalOrbitId, OrbitIntruderDef } from "@sw/shared";
 import {
   formatGalaxyCoords,
   formatSystemAddress,
+  intruderTotalShips,
   planetParamsForCoords,
   planetTypeForCoords,
 } from "@sw/shared";
+import { rowToIntruder, type OrbitIntruderRow } from "./intruders.js";
 
 export interface GalaxySlot {
   position: number;
@@ -22,6 +24,14 @@ export interface GalaxySlot {
   temperatureMax?: number;
   isYours?: boolean;
   isEmpty?: boolean;
+  orbitIntruders?: {
+    id: string;
+    name: string;
+    intruderKind: string;
+    orbit: LocalOrbitId;
+    totalShips: number;
+    units: Record<string, number>;
+  }[];
 }
 
 export interface GalaxySystemData {
@@ -66,6 +76,29 @@ export function buildSystemSlots(
   const byPos = new Map<number, (typeof rows)[0]>();
   for (const r of rows) byPos.set(r.position, r);
 
+  const intruderRows = db
+    .prepare(`SELECT * FROM orbit_intruders WHERE arm = ? AND system = ?`)
+    .all(arm, system) as OrbitIntruderRow[];
+  const intrudersByPos = new Map<number, OrbitIntruderDef[]>();
+  for (const row of intruderRows) {
+    const list = intrudersByPos.get(row.position) ?? [];
+    list.push(rowToIntruder(row));
+    intrudersByPos.set(row.position, list);
+  }
+
+  function intrudersForSlot(position: number) {
+    const list = intrudersByPos.get(position);
+    if (!list?.length) return undefined;
+    return list.map((i) => ({
+      id: i.id,
+      name: i.name,
+      intruderKind: i.intruderKind,
+      orbit: i.orbit,
+      totalShips: intruderTotalShips(i.units),
+      units: i.units,
+    }));
+  }
+
   const slots: GalaxySlot[] = [
     {
       position: w.starSlot,
@@ -91,6 +124,7 @@ export function buildSystemSlots(
         temperatureMax: hit.temperature_max,
         isYours: hit.user_id === viewerUserId,
         isEmpty: false,
+        orbitIntruders: intrudersForSlot(pos),
       });
     } else {
       const params = planetParamsForCoords(arm, system, pos, w.maxPlanetSlot);
@@ -104,6 +138,7 @@ export function buildSystemSlots(
         temperatureMin: params.temperatureMin,
         temperatureMax: params.temperatureMax,
         isEmpty: true,
+        orbitIntruders: intrudersForSlot(pos),
       });
     }
   }

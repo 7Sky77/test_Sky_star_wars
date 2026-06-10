@@ -5,6 +5,7 @@ import { syncAdminUsers } from "./adminAuth.js";
 import type { CatalogRef } from "./catalogStore.js";
 import { loadCatalog } from "./catalog.js";
 import { backfillPlanetParams, backfillPlanetTypes, openDatabase } from "./db.js";
+import { ensureSystemPirate, seedOrbitIntrudersFromCatalog } from "./intruders.js";
 import { registerRoutes } from "./routes.js";
 
 const PORT = Number(process.env.PORT ?? 3001);
@@ -26,6 +27,14 @@ async function main() {
     .map((s) => s.trim())
     .filter(Boolean);
   syncAdminUsers(db, adminUsernames);
+
+  seedOrbitIntrudersFromCatalog(db, catalogRef.current);
+  const playerPlanets = db
+    .prepare(`SELECT arm, system, position FROM planets`)
+    .all() as { arm: number; system: number; position: number }[];
+  for (const p of playerPlanets) {
+    ensureSystemPirate(db, p.arm, p.system, p.position);
+  }
 
   const adminEnabled =
     process.env.ADMIN_PANEL === "1" ||

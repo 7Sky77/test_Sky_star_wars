@@ -1132,14 +1132,43 @@ button {
 
 .local-space-panel {
   margin-top: 1.75rem;
-  padding: 1rem 1.1rem;
   border: 1px solid var(--border);
   border-radius: 8px;
   background: rgba(8, 18, 32, 0.55);
 }
 
+.local-space-panel-summary {
+  cursor: pointer;
+  padding: 0.75rem 1.1rem;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--text);
+  list-style: none;
+  user-select: none;
+}
+
+.local-space-panel-summary::-webkit-details-marker {
+  display: none;
+}
+
+.local-space-panel-summary::before {
+  content: "▸ ";
+  display: inline-block;
+  color: var(--accent);
+  transition: transform 0.15s ease;
+}
+
+.local-space-panel[open] > .local-space-panel-summary::before {
+  transform: rotate(90deg);
+}
+
+.local-space-panel-body {
+  padding: 0 1.1rem 1rem;
+  border-top: 1px solid rgba(148, 163, 184, 0.12);
+}
+
 .local-space-lead {
-  margin: 0.5rem 0 1rem;
+  margin: 0.75rem 0 1rem;
   line-height: 1.55;
   color: var(--text);
 }
@@ -1148,11 +1177,45 @@ button {
   margin: 0 0 1rem;
 }
 
+.local-space-fold {
+  margin-top: 0.65rem;
+  border: 1px solid rgba(56, 189, 248, 0.2);
+  border-radius: 6px;
+  background: rgba(12, 28, 48, 0.45);
+}
+
+.local-space-fold summary {
+  cursor: pointer;
+  padding: 0.55rem 0.75rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--accent);
+  list-style: none;
+  user-select: none;
+}
+
+.local-space-fold summary::-webkit-details-marker {
+  display: none;
+}
+
+.local-space-fold summary::before {
+  content: "▸ ";
+  display: inline-block;
+  transition: transform 0.15s ease;
+}
+
+.local-space-fold[open] summary::before {
+  transform: rotate(90deg);
+}
+
+.local-space-fold .local-space-orbits {
+  padding: 0 0.75rem 0.75rem;
+}
+
 .local-space-orbits {
   display: grid;
   gap: 0.75rem;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  margin-bottom: 0.75rem;
 }
 
 .local-space-orbit {
@@ -1170,13 +1233,66 @@ button {
   margin: 0.5rem 0 0;
 }
 
-.local-space-intruders {
-  margin-top: 1rem;
+.local-space-footnote {
+  margin: 0.75rem 0 0;
 }
 
-.local-space-intruders > strong {
-  display: block;
-  margin-bottom: 0.5rem;
+.unires-panel {
+  margin-top: 1.75rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: rgba(8, 18, 32, 0.55);
+}
+
+.unires-panel-summary {
+  cursor: pointer;
+  padding: 0.75rem 1.1rem;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--text);
+  list-style: none;
+  user-select: none;
+}
+
+.unires-panel-summary::-webkit-details-marker {
+  display: none;
+}
+
+.unires-panel-summary::before {
+  content: "▸ ";
+  display: inline-block;
+  color: var(--accent);
+  transition: transform 0.15s ease;
+}
+
+.unires-panel[open] > .unires-panel-summary::before {
+  transform: rotate(90deg);
+}
+
+.unires-panel-body {
+  padding: 0 1.1rem 1rem;
+  border-top: 1px solid rgba(148, 163, 184, 0.12);
+}
+
+.unires-lead {
+  margin: 0.75rem 0 0.75rem;
+  line-height: 1.55;
+}
+
+.unires-wealth {
+  margin: 0 0 0.75rem;
+}
+
+.unires-wealth strong {
+  color: #fbbf24;
+}
+
+.unires-table {
+  max-width: 520px;
+}
+
+.unires-footnote {
+  margin: 0.75rem 0 0;
 }
 
 .coords-sep {
@@ -1433,6 +1549,244 @@ button {
   font-weight: 600;
   color: #4ade80;
   font-variant-numeric: tabular-nums;
+}
+
+.fleet-mission-panel,
+.fleet-missions-list {
+  margin-top: 1.5rem;
+}
+
+.fleet-mission-form {
+  margin-top: 0.75rem;
+  padding: 1rem;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.fleet-mission-coords {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 0.65rem;
+}
+
+.fleet-mission-coords label,
+.fleet-mission-options label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
+.fleet-mission-coords input,
+.fleet-mission-coords select,
+.fleet-mission-options input[type="number"] {
+  padding: 0.4rem 0.5rem;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: rgba(0, 0, 0, 0.25);
+  color: inherit;
+}
+
+.fleet-mission-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem 1.5rem;
+}
+
+.fleet-mission-options label {
+  min-width: 180px;
+}
+
+.fleet-mission-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.88rem;
+}
+
+.fleet-missions-grid {
+  display: grid;
+  gap: 0.65rem;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  margin-top: 0.75rem;
+}
+
+.fleet-mission-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.75rem;
+}
+
+.fleet-mission-card header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.35rem;
+}
+
+.fleet-mission-orbit {
+  font-size: 0.78rem;
+  color: var(--accent);
+}
+
+.fleet-mission-status {
+  font-size: 0.85rem;
+  color: #fbbf24;
+  margin: 0 0 0.35rem;
+}
+
+.fleet-mission-ships {
+  font-size: 0.82rem;
+  margin: 0 0 0.25rem;
+}
+
+.fleet-mission-actions {
+  margin-top: 0.5rem;
+}
+
+.form-error {
+  color: #f87171;
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+.orbit-intruders-list {
+  margin-top: 1.5rem;
+}
+
+.orbit-intruders-grid {
+  display: grid;
+  gap: 0.65rem;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  margin-top: 0.75rem;
+}
+
+.orbit-intruder-card {
+  background: var(--panel);
+  border: 1px solid rgba(248, 113, 113, 0.35);
+  border-radius: 8px;
+  padding: 0.75rem;
+}
+
+.orbit-intruder-card.compact {
+  margin-top: 0.35rem;
+  padding: 0.5rem 0.65rem;
+}
+
+.orbit-intruder-card header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.orbit-intruder-kind {
+  font-size: 0.75rem;
+  color: #f87171;
+}
+
+.orbit-intruder-meta,
+.orbit-intruder-fleet {
+  font-size: 0.82rem;
+  margin: 0.15rem 0;
+}
+
+.orbit-intruders-alert {
+  padding: 0.65rem 0.75rem;
+  border-radius: 8px;
+  background: rgba(248, 113, 113, 0.08);
+  border: 1px solid rgba(248, 113, 113, 0.3);
+  font-size: 0.88rem;
+}
+
+.galaxy-orbit-intruders {
+  margin: 0.75rem 0;
+  padding: 0.65rem 0.75rem;
+  border-radius: 8px;
+  background: rgba(248, 113, 113, 0.08);
+  border: 1px solid rgba(248, 113, 113, 0.25);
+}
+
+.galaxy-orbit-intruders ul {
+  margin: 0.35rem 0 0;
+  padding-left: 1.1rem;
+  font-size: 0.88rem;
+}
+
+.battle-reports-list {
+  margin-top: 1.5rem;
+}
+
+.battle-reports-grid {
+  display: grid;
+  gap: 0.65rem;
+  margin-top: 0.75rem;
+}
+
+.battle-report-card {
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--panel);
+  overflow: hidden;
+}
+
+.battle-report-card.win {
+  border-color: rgba(74, 222, 128, 0.4);
+}
+
+.battle-report-card.loss {
+  border-color: rgba(248, 113, 113, 0.45);
+}
+
+.battle-report-head {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.35rem 0.75rem;
+  padding: 0.75rem;
+  border: none;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  font: inherit;
+}
+
+.battle-report-coords {
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
+.battle-report-body {
+  padding: 0 0.75rem 0.75rem;
+  font-size: 0.85rem;
+}
+
+.battle-report-body p {
+  margin: 0.25rem 0;
+}
+
+.battle-rounds-table {
+  width: 100%;
+  margin-top: 0.5rem;
+  border-collapse: collapse;
+  font-size: 0.78rem;
+}
+
+.battle-rounds-table th,
+.battle-rounds-table td {
+  border: 1px solid var(--border);
+  padding: 0.25rem 0.35rem;
+  text-align: center;
 }
 
 .bar-wrap {
