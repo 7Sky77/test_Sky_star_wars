@@ -276,6 +276,10 @@
       "capacity": 50,
       "fuel": 3,
       "attack": 30,
+      "attackPerShot": 6,
+      "shotsPerVolley": 1,
+      "volleyPeriodSeconds": 10,
+      "attackRadius": 260,
       "size": "small",
       "armorType": "light"
     },
@@ -339,6 +343,9 @@
       "capacity": 100,
       "fuel": 8,
       "attack": 75,
+      "attackPerShot": 9,
+      "shotsPerVolley": 1,
+      "volleyPeriodSeconds": 6,
       "size": "medium",
       "armorType": "reinforced"
     }

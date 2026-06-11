@@ -3,7 +3,7 @@ import { useGame } from "../gameContext.js";
 import { formatDiameterKm, formatTemperatureRange } from "../planetFormat.js";
 import { CoordsDisplay } from "../components/CoordsDisplay.js";
 import { LocalSpaceInfo } from "../components/LocalSpaceInfo.js";
-import { planetTypeClass } from "../planetVisuals.js";
+import { planetTypeClass, planetVisualStyle } from "../planetVisuals.js";
 
 function fmt(n: number) {
   return Math.floor(n).toLocaleString("ru-RU");
@@ -49,6 +49,12 @@ export function OverviewPage() {
           <div className="overview-hero">
             <div
               className={`overview-planet ${planetTypeClass(p.planetTypeId)}`}
+              style={planetVisualStyle(
+                p.planetTypeId,
+                p.position,
+                p.arm,
+                p.system
+              )}
               title={planetType?.name ?? "Планета"}
               aria-hidden
             />

@@ -1,6 +1,8 @@
 import { useMemo, useState } from "react";
 import {
   fleetFlightSeconds,
+  fleetSlowestSpeed,
+  fleetSlowestUnitName,
   intrudersAtCoords,
   orbitLabel,
   FLEET_MISSION_LABELS_RU,
@@ -64,14 +66,25 @@ export function FleetMissionPanel({
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const fleetSpeed = useMemo(() => {
+    if (!catalog || selectionShips <= 0) return 500;
+    return fleetSlowestSpeed(catalog, selected);
+  }, [catalog, selected, selectionShips]);
+
+  const slowestName = useMemo(() => {
+    if (!catalog || selectionShips <= 0) return null;
+    return fleetSlowestUnitName(catalog, selected);
+  }, [catalog, selected, selectionShips]);
+
   const flightSec = useMemo(() => {
     if (!p) return 0;
     return fleetFlightSeconds(
       { arm: p.arm, system: p.system, position: p.position },
       { arm: targetArm, system: targetSystem, position: targetPosition },
-      speedPct
+      speedPct,
+      fleetSpeed
     );
-  }, [p, targetArm, targetSystem, targetPosition, speedPct]);
+  }, [p, targetArm, targetSystem, targetPosition, speedPct, fleetSpeed]);
 
   async function send() {
     if (!p || selectionShips <= 0) return;
@@ -178,7 +191,7 @@ export function FleetMissionPanel({
             </select>
           </label>
           <label>
-            Скорость, %
+            Режим полёта, %
             <input
               type="range"
               min={10}
@@ -187,7 +200,10 @@ export function FleetMissionPanel({
               value={speedPct}
               onChange={(e) => setSpeedPct(Number(e.target.value))}
             />
-            <span>{speedPct}%</span>
+            <span>
+              {speedPct}% · флот {fleetSpeed}
+              {slowestName ? ` (${slowestName})` : ""}
+            </span>
           </label>
           <label>
             Удержание, мин (0 = бессрочно)
@@ -217,7 +233,7 @@ export function FleetMissionPanel({
           </span>
           <span>
             Время в пути: <strong>{formatEta(arrivesAtPreview, serverTime)}</strong> (
-            {flightSec} с при {speedPct}%)
+            {flightSec} с)
           </span>
           <span>
             Кораблей: <strong>{fmt(selectionShips)}</strong>

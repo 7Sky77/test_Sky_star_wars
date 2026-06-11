@@ -18,22 +18,37 @@ describe("fleet", () => {
   });
 
   it("flight time grows with distance and speed", () => {
+    const fighterSpeed = 700;
     const near = fleetFlightSeconds(
       { arm: 1, system: 1, position: 1 },
       { arm: 1, system: 1, position: 2 },
-      100
+      100,
+      fighterSpeed
     );
     const far = fleetFlightSeconds(
       { arm: 1, system: 1, position: 1 },
       { arm: 3, system: 5, position: 8 },
-      100
+      100,
+      fighterSpeed
     );
     const slow = fleetFlightSeconds(
       { arm: 1, system: 1, position: 1 },
       { arm: 3, system: 5, position: 8 },
-      50
+      50,
+      fighterSpeed
     );
     expect(far).toBeGreaterThan(near);
     expect(slow).toBeGreaterThan(far);
+  });
+
+  it("same-system hop is under two minutes for fighters", () => {
+    const sec = fleetFlightSeconds(
+      { arm: 2, system: 5, position: 1 },
+      { arm: 2, system: 5, position: 8 },
+      100,
+      700
+    );
+    expect(sec).toBeLessThan(120);
+    expect(sec).toBeGreaterThanOrEqual(12);
   });
 });

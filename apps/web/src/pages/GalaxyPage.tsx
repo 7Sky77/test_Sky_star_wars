@@ -3,7 +3,7 @@ import { formatGalaxyCoords, formatSystemAddress, orbitLabel } from "@sw/shared"
 import { apiFetch, setToken } from "../api.js";
 import { useGame } from "../gameContext.js";
 import { formatDiameterKm, formatTemperatureRange } from "../planetFormat.js";
-import { planetTypeClass, planetVariantStyle } from "../planetVisuals.js";
+import { PlanetSlotButton } from "../components/PlanetSlotButton.js";
 import type {
   GalaxySectorResponse,
   GalaxySlot,
@@ -35,6 +35,8 @@ export function GalaxyPage() {
   const { state, catalog } = useGame();
   const planetTypeName = (id?: string) =>
     catalog?.planetTypes?.find((t) => t.id === id)?.name ?? id;
+  const planetTypeInfo = (id?: string) =>
+    catalog?.planetTypes?.find((t) => t.id === id);
   const w = catalog?.world;
   const [viewMode, setViewMode] = useState<ViewMode>("sector");
   const [arm, setArm] = useState(state?.planet.arm ?? 1);
@@ -208,25 +210,22 @@ export function GalaxyPage() {
                     </button>
                     {sys.slots
                       .filter((s) => s.kind === "planet")
-                      .map((slot) => (
-                        <button
-                          key={slot.position}
-                          type="button"
-                          className={`slot planet ${planetTypeClass(slot.planetTypeId)} ${slot.isYours ? "yours" : ""} ${slot.ownerUsername ? "occupied" : "empty"} ${selected?.slot.label === slot.label ? "selected" : ""}`}
-                          style={planetVariantStyle(slot.position)}
-                          onClick={() => selectSlot(sys.arm, sys.system, slot)}
-                          title={
-                            slot.planetTypeId
-                              ? `${slot.label} · ${planetTypeName(slot.planetTypeId)}`
-                              : slot.label
-                          }
-                        >
-                          <span className="slot-num">{slot.position}</span>
-                          {slot.ownerUsername && (
-                            <span className="who">{slot.ownerUsername}</span>
-                          )}
-                        </button>
-                      ))}
+                      .map((slot) => {
+                        const pType = planetTypeInfo(slot.planetTypeId);
+                        return (
+                          <PlanetSlotButton
+                            key={slot.position}
+                            variant="slot"
+                            arm={sys.arm}
+                            system={sys.system}
+                            slot={slot}
+                            selected={selected?.slot.label === slot.label}
+                            typeName={pType?.name ?? planetTypeName(slot.planetTypeId)}
+                            typeDescription={pType?.description}
+                            onSelect={() => selectSlot(sys.arm, sys.system, slot)}
+                          />
+                        );
+                      })}
                   </div>
                 ))}
               </div>
@@ -253,27 +252,22 @@ export function GalaxyPage() {
                   const rad = (angle * Math.PI) / 180;
                   const x = 50 + r * Math.cos(rad);
                   const y = 50 + r * Math.sin(rad);
+                  const pType = planetTypeInfo(slot.planetTypeId);
                   return (
-                    <button
+                    <PlanetSlotButton
                       key={slot.position}
-                      type="button"
-                      className={`orbit-planet ${planetTypeClass(slot.planetTypeId)} ${slot.isYours ? "yours" : ""} ${slot.ownerUsername ? "occupied" : "empty"} ${selected?.slot.label === slot.label ? "selected" : ""}`}
-                      style={{
-                        left: `${x}%`,
-                        top: `${y}%`,
-                        ...planetVariantStyle(slot.position),
-                      }}
-                      onClick={() =>
+                      variant="orbit"
+                      arm={systemData.arm}
+                      system={systemData.system}
+                      slot={slot}
+                      selected={selected?.slot.label === slot.label}
+                      typeName={pType?.name ?? planetTypeName(slot.planetTypeId)}
+                      typeDescription={pType?.description}
+                      orbitStyle={{ left: `${x}%`, top: `${y}%` }}
+                      onSelect={() =>
                         selectSlot(systemData.arm, systemData.system, slot)
                       }
-                      title={
-                        slot.planetTypeId
-                          ? `${slot.label} · ${planetTypeName(slot.planetTypeId)}`
-                          : slot.label
-                      }
-                    >
-                      <span className="orbit-num">{slot.position}</span>
-                    </button>
+                    />
                   );
                 })}
                 <div className="orbit-ring orbit-ring-1" />

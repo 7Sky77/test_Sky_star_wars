@@ -1,0 +1,8 @@
+{
+  "battleRoundSeconds": 50,
+  "damageVariance": 0.5,
+  "defaultBlockCoefficient": 1,
+  "massAttackMinShotPower": 150,
+  "massAttackShooterSizes": ["large", "flagship"],
+  "massAttackTargetSizes": ["small"]
+}

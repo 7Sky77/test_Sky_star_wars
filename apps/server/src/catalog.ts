@@ -33,6 +33,7 @@ export async function loadCatalog(): Promise<GameCatalog> {
     localSpace,
     unires,
     orbitIntruders,
+    combat,
   ] = await Promise.all([
     readJsonFile(dir, "world.json"),
     readJsonFile(dir, "resources.json"),
@@ -49,6 +50,7 @@ export async function loadCatalog(): Promise<GameCatalog> {
     readJsonFile(dir, "local_space.json"),
     readJsonFile(dir, "unires.json"),
     readJsonFile(dir, "orbit_intruders.json"),
+    readJsonFile(dir, "combat.json"),
   ]);
   const raw = {
     world,
@@ -66,6 +68,7 @@ export async function loadCatalog(): Promise<GameCatalog> {
     localSpace,
     unires,
     orbitIntruders,
+    combat,
   };
   return catalogSchema.parse(raw);
 }

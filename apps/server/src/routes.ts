@@ -501,7 +501,7 @@ export function registerRoutes(
 
     const now = Date.now();
     advanceFleetMissions(db, cat(), now);
-    const r = recallFleetMission(db, userId, missionId, now);
+    const r = recallFleetMission(db, cat(), userId, missionId, now);
     if (!r.ok) return rep.code(400).send({ error: r.error });
 
     logGameEvent(db, {

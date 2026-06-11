@@ -71,6 +71,10 @@ export interface BattleReportState {
     defenderDamage: number;
     attackerDestroyed: number;
     defenderDestroyed: number;
+    attackerVolleys?: number;
+    defenderVolleys?: number;
+    attackerShots?: number;
+    defenderShots?: number;
   }[];
   createdAt: number;
 }

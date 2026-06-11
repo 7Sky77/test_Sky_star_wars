@@ -3,6 +3,7 @@ import type { GameCatalog, LocalOrbitId } from "@sw/shared";
 import { resolveArrivalBattles } from "./combat.js";
 import {
   fleetFlightSeconds,
+  fleetSlowestSpeed,
   validateMissionTarget,
   type FleetMissionStatus,
   type FleetMissionType,
@@ -31,6 +32,14 @@ export interface FleetMissionRow {
 }
 
 const VALID_ORBITS = new Set<LocalOrbitId>(["low", "medium", "high"]);
+
+function parseUnitsJson(json: string): Record<string, number> {
+  try {
+    return JSON.parse(json) as Record<string, number>;
+  } catch {
+    return {};
+  }
+}
 
 function addUnitsToPlanet(
   db: Database.Database,
@@ -153,6 +162,7 @@ export function sendFleetMission(
   const holdMinutes = Math.max(0, Math.min(720, Math.floor(payload.holdMinutes)));
   const holdSeconds = holdMinutes * 60;
 
+  const slowestSpeed = fleetSlowestSpeed(catalog, cleaned);
   const flightSec = fleetFlightSeconds(
     { arm: planet.arm, system: planet.system, position: planet.position },
     {
@@ -160,7 +170,8 @@ export function sendFleetMission(
       system: payload.targetSystem,
       position: payload.targetPosition,
     },
-    speedPct
+    speedPct,
+    slowestSpeed
   );
   const arrivesAt = now + flightSec * 1000;
   const holdUntil =
@@ -216,6 +227,7 @@ export function sendFleetMission(
 
 export function recallFleetMission(
   db: Database.Database,
+  catalog: GameCatalog,
   userId: number,
   missionId: number,
   now: number
@@ -231,6 +243,8 @@ export function recallFleetMission(
     .get(row.origin_planet_id, userId) as { id: number } | undefined;
   if (!planet) return { ok: false, error: "planet_not_found" };
 
+  const missionUnits = parseUnitsJson(row.units_json);
+  const slowestSpeed = fleetSlowestSpeed(catalog, missionUnits);
   const flightSec = fleetFlightSeconds(
     {
       arm: row.target_arm,
@@ -242,7 +256,8 @@ export function recallFleetMission(
       system: row.origin_system,
       position: row.origin_position,
     },
-    row.speed_pct
+    row.speed_pct,
+    slowestSpeed
   );
   const arrivesAt = now + flightSec * 1000;
 

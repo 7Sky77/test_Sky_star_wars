@@ -79,7 +79,11 @@ export function BattleReportsList({ reports }: { reports: BattleReportState[] })
                         <th>Раунд</th>
                         <th>Атак.</th>
                         <th>Защ.</th>
+                        <th>Залпы →</th>
+                        <th>Выстр. →</th>
                         <th>Урон →</th>
+                        <th>Залпы ←</th>
+                        <th>Выстр. ←</th>
                         <th>Урон ←</th>
                         <th>Потери</th>
                       </tr>
@@ -90,7 +94,11 @@ export function BattleReportsList({ reports }: { reports: BattleReportState[] })
                           <td>{round.round}</td>
                           <td>{round.attackerShips}</td>
                           <td>{round.defenderShips}</td>
+                          <td>{round.attackerVolleys ?? "—"}</td>
+                          <td>{round.attackerShots ?? "—"}</td>
                           <td>{fmt(round.attackerDamage)}</td>
+                          <td>{round.defenderVolleys ?? "—"}</td>
+                          <td>{round.defenderShots ?? "—"}</td>
                           <td>{fmt(round.defenderDamage)}</td>
                           <td>
                             −{round.attackerDestroyed} / −{round.defenderDestroyed}

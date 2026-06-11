@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { flatPurchaseCost, maxAffordableQuantity, scalePurchaseCost } from "@sw/shared";
 import { apiFetch } from "../api.js";
 import { QuantityPicker } from "../components/QuantityPicker.js";
+import { UnitFireProfileInfo } from "../components/UnitFireProfileInfo.js";
 import { UnitSpecializationInfo } from "../components/UnitSpecializationInfo.js";
 import { purchaseErrorMessage } from "../purchaseErrors.js";
 import { useGame } from "../gameContext.js";
@@ -94,6 +95,7 @@ export function ShipyardPage() {
                   />
                 </>
               )}
+              <UnitFireProfileInfo unit={u} />
               <UnitSpecializationInfo unit={u} />
               <button
                 type="button"

@@ -23,6 +23,23 @@ export const worldSchema = z.object({
   }),
 });
 
+/** Правила боя (раунд, массовая атака, разброс урона). */
+export const combatRulesSchema = z.object({
+  /** Длительность одного боевого раунда, сек. */
+  battleRoundSeconds: z.number().positive().default(50),
+  /** Разброс урона ±доля (0.5 = от 50% до 150%). */
+  damageVariance: z.number().min(0).max(1).default(0.5),
+  defaultBlockCoefficient: z.number().positive().default(1),
+  /** Мин. урон выстрела для массовой атаки крупных юнитов. */
+  massAttackMinShotPower: z.number().positive().default(150),
+  massAttackShooterSizes: z
+    .array(z.enum(["small", "medium", "large", "flagship"]))
+    .default(["large", "flagship"]),
+  massAttackTargetSizes: z
+    .array(z.enum(["small", "medium", "large", "flagship"]))
+    .default(["small"]),
+});
+
 export const resourceTypeSchema = z.object({
   id: z.string(),
   name: z.string(),
@@ -136,6 +153,16 @@ export const unitStatsSchema = z.object({
   capacity: z.number().nonnegative().optional(),
   fuel: z.number().nonnegative().optional(),
   attack: z.number().nonnegative().optional(),
+  /** Урон одного выстрела (если нет — выводится из attack). */
+  attackPerShot: z.number().nonnegative().optional(),
+  /** Выстрелов в одном залпе. */
+  shotsPerVolley: z.number().int().positive().optional(),
+  /** Секунд между залпами (для справки и будущего тактического боя). */
+  volleyPeriodSeconds: z.number().positive().optional(),
+  /** Дальность атаки (справочно). */
+  attackRadius: z.number().nonnegative().optional(),
+  /** Коэффициент блокировки цели (делитель в формуле массовой атаки). */
+  blockCoefficient: z.number().positive().optional(),
   size: unitSizeIdSchema.optional(),
   armorType: unitArmorTypeIdSchema.optional(),
 });
@@ -274,6 +301,14 @@ export const catalogSchema = z.object({
   localSpace: localSpaceSchema,
   unires: uniresSchema,
   orbitIntruders: z.array(orbitIntruderSchema).default([]),
+  combat: combatRulesSchema.default({
+    battleRoundSeconds: 50,
+    damageVariance: 0.5,
+    defaultBlockCoefficient: 1,
+    massAttackMinShotPower: 150,
+    massAttackShooterSizes: ["large", "flagship"],
+    massAttackTargetSizes: ["small"],
+  }),
 });
 
 export type WorldConfig = z.infer<typeof worldSchema>;
@@ -288,5 +323,6 @@ export type PlanetTypeDef = z.infer<typeof planetTypeSchema>;
 export type LocalSpaceDef = z.infer<typeof localSpaceSchema>;
 export type UniresDef = z.infer<typeof uniresSchema>;
 export type OrbitIntruderDef = z.infer<typeof orbitIntruderSchema>;
+export type CombatRules = z.infer<typeof combatRulesSchema>;
 export type SpecializationModifier = z.infer<typeof specializationModifierSchema>;
 export type GameCatalog = z.infer<typeof catalogSchema>;
